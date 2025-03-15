@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd">
+	
+	<flow name="bulk_insert_csv_files_productFlow" doc:id="6eb3a76f-5cb7-47dd-981f-4cbc94f31ed3" >
+		<http:listener doc:name="Listener" doc:id="16662e4a-60c0-4e5e-9360-bea6e6031ddf" config-ref="HTTP_Listener_config_Support" path="/register-products"/>
+		<logger level="INFO" doc:name="Start Log" doc:id="88489dda-8bb7-4b59-9637-b3e9b3ec6dfb" message="Started Bulk Insert Database" />
+		<ee:transform doc:name="Set fileName variable" doc:id="2d9b9bbc-5677-44f9-91be-1ef19b7f9233">
+						<ee:message>
+						</ee:message>
+						<ee:variables>
+							<ee:set-variable variableName="fileName"><![CDATA[%dw 2.0
+output application/java
+---
+"failed-records/invalidProducts_" ++ now() as DateTime as String {format: 'yyyyMMdd_HHmmss'} ++ ".csv"]]></ee:set-variable>
+						</ee:variables>
+					</ee:transform>
+		<batch:job jobName="bulk_insert_csv_files_productBatch_Job" doc:id="9b626d4b-48d8-4cee-a38f-9fd7fd1e68d9" maxFailedRecords="-1" blockSize="2">
+			<batch:process-records >
+				<batch:step name="Insert_Product" doc:id="2c0e81fc-6bfa-4d71-aad3-8a324ba0060f" >
+					<ee:transform doc:name="Transform CSV to Input Payload" doc:id="2b35949d-5997-4c17-b74e-d75f88310bd9">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+var currentDate = now() as Date
+var formattedCurrentDate = currentDate as String { format: "yyyy-MM-dd" }
+var personalOwner = "BaoTDN2"
+
+fun formatDate(date) =
+  if (date == null or date == "") formattedCurrentDate 
+  else date as Date { format: "M/d/yyyy" } as String { format: "yyyy-MM-dd" }
+
+fun resPerson(person) = 
+  if ( person == null or person == "" ) personalOwner 
+  else person
+---
+{
+    "productCode": payload[0].ProductCode,
+	"productName": payload[0].ProductName,
+	"unit": payload[0].Unit,
+	"quantityInStock": payload[0].QuantityInStock,
+	"unitPrice": payload[0].UnitPrice,
+	"createdByDate": formatDate(payload[0].CreatedByDate),
+	"createdBy": resPerson(payload[0].CreatedBy)
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+					<logger level="INFO" doc:name="Print Payload" doc:id="ddb266e2-4ddb-43c4-b1c6-9119a05bb637" message="#[payload]" />
+					<batch:aggregator doc:name="Batch Aggregator" doc:id="0ad5a8b9-d69d-4c3d-8f04-9a297b300f2b" size="2">
+						<db:bulk-insert doc:name="Bulk insert" doc:id="0a43f9ec-320f-480d-bf0c-42463235ec34" config-ref="Database_Config">
+							<db:sql ><![CDATA[INSERT INTO MLSDB_BaoTDN2.Products (
+    ProductCode,
+    ProductName,
+    Unit,
+    QuantityInStock,
+    UnitPrice,
+    CreatedByDate,
+    CreatedBy
+)
+VALUES (
+    :productCode,
+    :productName,
+    :unit,
+    :quantityInStock,
+    :unitPrice,
+    :createdByDate,
+    :createdBy
+)]]></db:sql>
+						</db:bulk-insert>
+					</batch:aggregator>
+				</batch:step>
+				<batch:step name="Catched_Fail_Records" doc:id="86f0b1d0-fd44-4e78-beb9-542ec9278616" acceptPolicy="ONLY_FAILURES">
+					<logger level="INFO" doc:name="Check Running" doc:id="232575b8-d9dc-4189-b8f2-2f7c002e267d" message='"Failed Records have entered"'/>
+					<batch:aggregator doc:name="Batch Aggregator" doc:id="1cd1975f-e993-48f4-ab52-c9083d218d60" streaming="true">
+						<sftp:write doc:name="Write" doc:id="b620f8cd-02a1-4faf-aaed-9a1ea0b735ee" config-ref="SFTP_Config" path="#[vars.fileName]">
+							<sftp:content ><![CDATA[#[%dw 2.0
+output application/csv
+---
+payload]]]></sftp:content>
+						</sftp:write>
+					</batch:aggregator>
+				</batch:step>
+			</batch:process-records>
+		</batch:job>
+		<!-- [STUDIO:"Read"]<sftp:read doc:name="Read" doc:id="f600f4d0-8791-4172-b6d5-d8f4bb36b107" config-ref="SFTP_Config" path="#[vars.fileName&#93;"/> [STUDIO] -->
+		<ee:transform doc:name="Complete Response" doc:id="f4e789b0-ae9a-4956-a82e-57db9b7064e0">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	Register: "Completed",
+	FailedRecords: vars.fileName
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+		<logger level="INFO" doc:name="End Log" doc:id="16ffcaf3-7ef8-4067-80cb-0b1cbe17a9f7" message="Completed Bulk Inserting"/>
+	</flow>
+</mule>

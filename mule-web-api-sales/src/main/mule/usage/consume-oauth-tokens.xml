@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config_oauth" doc:name="HTTP Listener config" doc:id="875ba728-e2ee-45b1-af54-67c50e4dd1ca" basePath="oauth" >
+		<http:listener-connection host="0.0.0.0" port="8086" />
+	</http:listener-config>
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="2748a432-c07d-4d74-adfa-8f02259d2bf5" entryTtl="5" entryTtlUnit="MINUTES" />
+	<sub-flow name="retrieve-bearer-tokens" doc:id="c5235539-e587-4cde-aaa4-335a42f342d6" >
+		<os:retrieve doc:name="Retrieve Oauth Access Token" doc:id="cad27a5c-441c-43ba-96ae-2a6c5308c0ac" key="#[vars.oauthRequestPayload.client_id]" objectStore="Object_store">
+			<os:default-value ><![CDATA[#[""]]]></os:default-value>
+		</os:retrieve>
+		<choice doc:name="Choice To Help Reuse Tokens" doc:id="48d01b50-677b-4e17-972a-b109edff5abc" >
+			<when expression="#[isEmpty(payload)]" >
+				<http:request method="POST" doc:name="Request To Get Tokens From Oauth Service" doc:id="8ed13b16-4b7e-4f55-a304-6e2ff7cf5777" url="https://dev-nzclymjtmoe0c5d6.us.auth0.com/oauth/token" >
+					<http:body ><![CDATA[#[vars.oauthRequestPayload]]]></http:body>
+					<http:headers ><![CDATA[#[output application/java
+---
+{
+	"content-type" : "application/json"
+}]]]></http:headers>
+				</http:request>
+				<os:store doc:name="Store Oauth Tokens" doc:id="125ffe90-3e43-46e1-87de-17dd036a73cf" key="#[vars.oauthRequestPayload.client_id]" objectStore="Object_store" />
+				<set-variable value='#["Bearer " ++ payload.access_token as String]' doc:name="Set Bearer Access Token " doc:id="2d5db55e-506d-49f1-956d-902786aee21c" variableName="bearerToken" />
+			</when>
+			<otherwise >
+				<set-variable value='#["Bearer " ++ payload.access_token as String]' doc:name="Set Bearer Access Token " doc:id="a82125b0-4614-4fcc-8046-b628954326e9" variableName="bearerToken" />
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="Prepare Response For Token" doc:id="03d332d4-dd49-4685-80e8-becdfbc778c3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Bearer Token": vars.bearerToken
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+	<flow name="consume-oauth-tokensFlow" doc:id="d274bf89-17e0-4d82-956e-d95ce2b5eb85" >
+		<http:listener doc:name="Listener" doc:id="d8dc32f3-d079-46db-aacf-0d96b20493cc" config-ref="HTTP_Listener_config_oauth" path="/get-bearer"/>
+		<logger level="INFO" doc:name="Start Log" doc:id="e062dae3-94b2-43f3-b738-b60d24cd5228" message="Get Oauth"/>
+		<ee:transform doc:name="Set Oauth Request  Payload Variable" doc:id="ff133581-b188-471d-a943-f11c7f2a15ad" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="oauthRequestPayload" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"client_id": "4XuhtsqmD84y27IwdqZq6DJm6GzrMuLz",
+	"client_secret": "xBJlWwJ4qdAAUI8DguOfVi-vq3yH4P1h0pmD1ryumZyrt_vUELUbBuakKIK_9vxS",
+	"audience": "https://dev-nzclymjtmoe0c5d6.us.auth0.com/api/v2/",
+	"grant_type": "client_credentials"
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="Flow Reference" doc:id="ea1b6c19-2c9f-4245-adfa-4ac296ad1162" name="retrieve-bearer-tokens" />
+		<logger level="INFO" doc:name="End Log" doc:id="b43eb980-a5c7-4d4a-bc8a-adc5ab87538b" message="Completed Get Oauth" />
+	</flow>
+</mule>

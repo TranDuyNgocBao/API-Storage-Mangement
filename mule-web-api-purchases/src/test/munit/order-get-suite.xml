@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="order-get-suite.xml" />
+	<munit:test name="get:\orders:mule-purchases-sapi-config-success-test" doc:id="cf0ed77d-3128-41eb-847b-673460c8a99d" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Add CreatedByDate Condition" doc:id="768aeaca-b7f4-4c0d-8aa6-eea10ed4bfae" processor="set-variable">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="f5afaa1b-96e7-4ba9-9321-773bf0852efa" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="queryParams" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="sqlQuery" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="transactionId" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_3.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Flow Reference" doc:id="4e4189bd-a901-44a8-bcc5-82005ff12da9" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="47298edc-90a6-4920-87f0-58225cd6921c" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_payload.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_4.dwl')]" />
+						<munit-tools:variable key="queryParams" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_5.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="sqlQuery" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_6.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="transactionId" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_7.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Set Query Params" doc:id="55355af6-0d1b-45fc-99c2-8db23a95e935" processor="set-variable">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="cb7fa8bf-63de-4065-bbcc-ad9eeefda291" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_8.dwl')]" />
+						<munit-tools:variable key="queryParams" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_9.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="transactionId" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_10.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Set Base Query" doc:id="629ae360-52cc-4637-b4b5-bfd01b1206e9" processor="set-variable">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="897d4c32-eb1a-4b9a-92fb-c863c3d115f7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_11.dwl')]" />
+						<munit-tools:variable key="queryParams" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_12.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="sqlQuery" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_13.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="transactionId" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_14.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Add OrderNo Condition" doc:id="776a29a0-fbc9-4d38-8d87-ef43834385b6" processor="set-variable">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="660e185a-0a3e-45ef-bdc2-917eb1e85464" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_15.dwl')]" />
+						<munit-tools:variable key="queryParams" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_16.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="sqlQuery" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_17.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="transactionId" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_18.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Add OrderDate Condition" doc:id="40d4d953-fbe1-4ba6-a0b3-f842c0f55c30" processor="set-variable">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="2b3bd0ad-0a63-45a8-96dc-88009d2d442d" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_19.dwl')]" />
+						<munit-tools:variable key="queryParams" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_20.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="sqlQuery" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_21.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="transactionId" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\mock_variable_22.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:spy doc:name="Spy Transform Message" doc:id="1ae5f6a2-0430-409a-8512-a65b2c667fb8" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fe8fbdcb-eaf7-4717-9564-fd1aa3546d0e" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="848ed79f-789a-4f3b-a207-772913e14f20" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import getordersmulepurchasessapiconfigsuccesstest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="d82fbe91-2277-4296-875f-b3f6d7aafc43" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import getordersmulepurchasessapiconfigsuccesstest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="72600513-f98f-4172-8110-bb5f5f375ddc" >
+				<munit:payload value="#[readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\set-event_variable_.dwl')]" />
+					<munit:variable key="transactionId" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfigsuccesstest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\orders:mule-purchases-sapi-config" doc:id="eee44855-8c92-4582-ba77-b83b74cb67b7" name="get:\orders:mule-purchases-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="66293668-37ab-458c-9cc4-3bd91f62ed2f" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getordersmulepurchasessapiconfigsuccesstest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Transform Message" doc:id="6904a8a6-cb21-4f7a-a9bc-858d7cc95f61" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fe8fbdcb-eaf7-4717-9564-fd1aa3546d0e" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\orders:mule-purchases-sapi-config-not-found-test" doc:id="77d0ffde-84c1-45db-9bc9-28619ec5b0b2" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Add CreatedBy Condition" doc:id="dc739a5d-bd22-4808-9574-61c431facd62" processor="set-variable">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="a4d9e8d1-ac48-47e3-b84e-32786660490b" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="queryParams" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="sqlQuery" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="transactionId" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_3.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Add CreatedByDate Condition" doc:id="e79c3419-fd1f-4b7b-8ccd-62170010448f" processor="set-variable">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="f5afaa1b-96e7-4ba9-9321-773bf0852efa" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_4.dwl')]" />
+						<munit-tools:variable key="queryParams" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_5.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="sqlQuery" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_6.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="transactionId" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_7.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Flow Reference" doc:id="8b75cfa3-84a2-4822-974b-495340bc84f1" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="47298edc-90a6-4920-87f0-58225cd6921c" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_payload.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_8.dwl')]" />
+						<munit-tools:variable key="queryParams" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_9.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="sqlQuery" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_10.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="transactionId" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_11.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Set Query Params" doc:id="55db48c8-be2a-4ed2-bde5-baa175409721" processor="set-variable">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="cb7fa8bf-63de-4065-bbcc-ad9eeefda291" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_12.dwl')]" />
+						<munit-tools:variable key="queryParams" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_13.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="transactionId" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_14.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Set Base Query" doc:id="009e869d-cf53-458b-a3ac-19a32d044209" processor="set-variable">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="897d4c32-eb1a-4b9a-92fb-c863c3d115f7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_15.dwl')]" />
+						<munit-tools:variable key="queryParams" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_16.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="sqlQuery" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_17.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="transactionId" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_18.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Add OrderNo Condition" doc:id="4737e8c0-e73d-4c7e-b1f1-fc990d9a7e0d" processor="set-variable">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="660e185a-0a3e-45ef-bdc2-917eb1e85464" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_19.dwl')]" />
+						<munit-tools:variable key="queryParams" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_20.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="sqlQuery" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_21.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="transactionId" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_22.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Add OrderDate Condition" doc:id="73acc56f-2746-47bd-a9aa-4cc1d8dd03db" processor="set-variable">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="2b3bd0ad-0a63-45a8-96dc-88009d2d442d" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_23.dwl')]" />
+						<munit-tools:variable key="queryParams" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_24.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="sqlQuery" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_25.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="transactionId" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\mock_variable_26.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:spy doc:name="Spy Transform Message" doc:id="eca1a86b-4b29-4687-9e3f-a1e1c77566c4" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="4fab245c-babc-4df9-958b-f2acae58b2be" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="18c911bc-5593-4104-9b46-8a7f3dd23d55" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import getordersmulepurchasessapiconfignotfoundtest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="c8d40c85-271e-448a-9736-7926c4895344" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import getordersmulepurchasessapiconfignotfoundtest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="07299232-b3bd-4f18-a06b-f823430badd0" >
+				<munit:payload value="#[readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\set-event_variable_.dwl')]" />
+					<munit:variable key="transactionId" value="#[output application/java --- readUrl('classpath://getordersmulepurchasessapiconfignotfoundtest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\orders:mule-purchases-sapi-config" doc:id="61a00656-9532-4272-9e65-099229d004a6" name="get:\orders:mule-purchases-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="c8dfaaec-c9af-457c-a7d5-35adfdae73eb" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getordersmulepurchasessapiconfignotfoundtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Transform Message" doc:id="952d9e16-5292-4457-a931-c1dd6e9545a7" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="4fab245c-babc-4df9-958b-f2acae58b2be" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

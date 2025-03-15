@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="order-delete-suite.xml" />
+	<munit:test name="delete:\orders:mule-purchases-sapi-config-success-test" doc:id="5d9e3f1d-4ca0-4ab0-b376-26862608522f" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Flow Reference" doc:id="dadb9ea6-c9fb-4ef5-813b-87782b3986eb" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="6507e6eb-47fe-464e-baca-b96b083e7400" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java --- readUrl('classpath://deleteordersmulepurchasessapiconfigsuccesstest\mock_payload.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://deleteordersmulepurchasessapiconfigsuccesstest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="orderNo" value="#[output application/java --- readUrl('classpath://deleteordersmulepurchasessapiconfigsuccesstest\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="orderDate" value="#[output application/java --- readUrl('classpath://deleteordersmulepurchasessapiconfigsuccesstest\mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="transactionId" value="#[output application/java --- readUrl('classpath://deleteordersmulepurchasessapiconfigsuccesstest\mock_variable_3.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:spy doc:name="Spy Set Input Query Param Variables" doc:id="3ad4e6c8-ffd7-4fb8-a2d2-c65899633a6b" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="4fc692b2-3334-4ec7-9ab5-e0fbad7edcf2" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="8328ef09-8f7a-4ff0-a762-a187d7ff4b6e" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import deleteordersmulepurchasessapiconfigsuccesstest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="af9be255-1dfa-4a87-86fd-00540d2c4ec1" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import deleteordersmulepurchasessapiconfigsuccesstest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit-tools:spy doc:name="Spy Success Response" doc:id="a5be42b5-5627-4ae3-b423-77c883402c64" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="52052c91-6070-4c6b-af1d-029fbdfbf298" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="bef1dd5b-61d8-4076-b24a-4a90da3e02fb" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import deleteordersmulepurchasessapiconfigsuccesstest::spy_assert_payload2
+---
+spy_assert_payload2::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="e744695b-db4b-41ef-9194-6bfdaaf227da" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import deleteordersmulepurchasessapiconfigsuccesstest::spy_assert_payload3
+---
+spy_assert_payload3::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="2ee3acbc-dade-4e09-91c8-d6346080dbcf" >
+				<munit:payload value="#[readUrl('classpath://deleteordersmulepurchasessapiconfigsuccesstest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://deleteordersmulepurchasessapiconfigsuccesstest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://deleteordersmulepurchasessapiconfigsuccesstest\set-event_variable_.dwl')]" />
+					<munit:variable key="transactionId" value="#[output application/java --- readUrl('classpath://deleteordersmulepurchasessapiconfigsuccesstest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to delete:\orders:mule-purchases-sapi-config" doc:id="7f45df03-b5d0-4ae2-9c2e-f6337961ee06" name="delete:\orders:mule-purchases-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="e6c3f404-d157-4fe9-9c34-19468b50a09c" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import deleteordersmulepurchasessapiconfigsuccesstest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Set Input Query Param Variables" doc:id="4ac83fd6-086b-4239-bff6-9dbaadb52db2" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="4fc692b2-3334-4ec7-9ab5-e0fbad7edcf2" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Success Response" doc:id="092b4e96-5f14-4dd2-af99-d9d51b9ec74f" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="52052c91-6070-4c6b-af1d-029fbdfbf298" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="delete:\orders:mule-purchases-sapi-config-not-found-test" doc:id="f989c785-f411-4476-9313-cf6748323e95" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Flow Reference" doc:id="1bd1ecbe-119f-4979-9fca-1b40a6236c7e" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="6507e6eb-47fe-464e-baca-b96b083e7400" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java --- readUrl('classpath://deleteordersmulepurchasessapiconfignotfoundtest\mock_payload.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://deleteordersmulepurchasessapiconfignotfoundtest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="orderNo" value="#[output application/java --- readUrl('classpath://deleteordersmulepurchasessapiconfignotfoundtest\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="orderDate" value="#[output application/java --- readUrl('classpath://deleteordersmulepurchasessapiconfignotfoundtest\mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="transactionId" value="#[output application/java --- readUrl('classpath://deleteordersmulepurchasessapiconfignotfoundtest\mock_variable_3.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:spy doc:name="Spy Not Found Response" doc:id="89bd6cac-db24-4f17-88cd-5b287833914e" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="5470de7d-78e5-4450-90ca-59e315b480b6" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="449f9af8-e170-429e-980a-ddf7401d5504" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import deleteordersmulepurchasessapiconfignotfoundtest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="e0faaea6-eb82-4d6b-a202-9b77ef64831d" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import deleteordersmulepurchasessapiconfignotfoundtest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="f7e6b340-e00f-4fb6-b042-cad557cdb20a" >
+				<munit:payload value="#[readUrl('classpath://deleteordersmulepurchasessapiconfignotfoundtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://deleteordersmulepurchasessapiconfignotfoundtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://deleteordersmulepurchasessapiconfignotfoundtest\set-event_variable_.dwl')]" />
+					<munit:variable key="transactionId" value="#[output application/java --- readUrl('classpath://deleteordersmulepurchasessapiconfignotfoundtest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to delete:\orders:mule-purchases-sapi-config" doc:id="3251504b-123a-4537-8e75-0eaedfc8d523" name="delete:\orders:mule-purchases-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="0d2e9bf3-4d6a-433b-b6a6-be3825885663" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import deleteordersmulepurchasessapiconfignotfoundtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Set Input Query Param Variables" doc:id="9f59c256-f828-433b-8821-c4338f525c88" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="4fc692b2-3334-4ec7-9ab5-e0fbad7edcf2" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Not Found Response" doc:id="f8bacf8a-98fa-4f0e-8f4c-6a866c0b891d" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="5470de7d-78e5-4450-90ca-59e315b480b6" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

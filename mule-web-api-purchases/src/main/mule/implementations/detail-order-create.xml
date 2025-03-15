@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	
+	
+	<sub-flow name="response-flow-choices" doc:id="38917c03-f01a-4492-b567-6da0cc41ce21" >
+		<choice doc:name="Choice" doc:id="c5918536-b58a-456e-8615-25cd4108e9e1">
+			<when expression='#[(typeOf(vars.productData) ~= "Array") and (typeOf(vars.orderData) ~= "Array")]'>
+				<try doc:name="Try" doc:id="e9162ede-8bf8-4983-8105-4883337dab9b">
+					<flow-ref doc:name="Flow Reference" doc:id="5c1c7971-7912-45ec-a171-6de1330c9cb7" name="create-order-detail-db" />
+					<ee:transform doc:name="Prepare Response" doc:id="828173f3-9ec0-4b3c-a004-2786e495cb62">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	OrderNo: vars.orderNo as String,
+	ProductCode: vars.productCode as String,
+	OrderDate: vars.inputPayload.orderDate as String,
+	Message: "Create Detail Order Successfully"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+					<error-handler>
+						<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="c4cfe66c-826c-4ba0-ba6c-8230e8ca073b" type="DB:QUERY_EXECUTION">
+							<ee:transform doc:name="Error Response" doc:id="d5ab4ee3-cdcb-4fc0-8ec6-e2df6699eee2">
+								<ee:message>
+									<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"code": 400,
+	"message": "Bad Request",
+	"description": error.description,
+	"dateTime": now() as String {format: "yyyy-MM-dd'T'HH:mm:ss'Z'"},
+	"transactionId": vars.transactionId
+}]]></ee:set-payload>
+								</ee:message>
+								<ee:variables>
+									<ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+								</ee:variables>
+							</ee:transform>
+						</on-error-continue>
+					</error-handler>
+				</try>
+			</when>
+			<otherwise>
+				<ee:transform doc:name="Not Found Response" doc:id="580ae597-03a0-48ae-82d4-7289270a06e8">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+if (typeOf(vars.productData) ~= "String")
+	"Product does not exist in storage."
+else if (typeOf(vars.orderData) ~= "String")
+	"Order has not been created"
+else
+	"Invalid Input"]]></ee:set-payload>
+					</ee:message>
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="fetch-from-orders-products" doc:id="695647c9-2129-497f-9c96-1372cae40f37" >
+		<scatter-gather doc:name="Fetch Data From Orders And Products" doc:id="74d49526-b9da-4622-aae4-c8540c57f114">
+				<route>
+					<http:request method="GET" doc:name="Request Fetch Product by ProductCode" doc:id="af68c35b-3763-4faa-969e-b34f3d1ab8b7" config-ref="HTTP_Request_Product_configuration" path="/product">
+						<http:query-params><![CDATA[#[{
+	productCode: vars.productCode
+}]]]></http:query-params>
+					</http:request>
+					<ee:transform doc:name="Set productData Variable" doc:id="75eb8fee-60e1-4879-8f7d-abf3822f0119">
+						<ee:message>
+						</ee:message>
+						<ee:variables>
+							<ee:set-variable variableName="productData"><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+						</ee:variables>
+					</ee:transform>
+				</route>
+				<route>
+					<http:request method="GET" doc:name="Request Get Orders by OrderNo and OrderDate" doc:id="d816b271-5b63-46cf-8b2c-63be2a89bfaa" config-ref="HTTP_Request_Purchase_configuration" path="/orders">
+						<http:query-params><![CDATA[#[{
+	orderNo: vars.orderNo,
+	orderDate: payload.orderDate
+}]]]></http:query-params>
+					</http:request>
+					<ee:transform doc:name="Set orderData Variable" doc:id="ad6e8e8c-4eaf-4329-abb9-11bfe6e6503d">
+						<ee:message>
+						</ee:message>
+						<ee:variables>
+							<ee:set-variable variableName="orderData"><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+						</ee:variables>
+					</ee:transform>
+				</route>
+			</scatter-gather>
+	</sub-flow>
+	<flow name="post:\orderDetails:application\json:mule-purchases-sapi-config">
+		<logger level="INFO" doc:name="Start Log" doc:id="09f09639-1c76-4059-9e76-263789372153" message='Transaction ID: #[vars.transactionId], Message: "Start creating purchase order detail flow"' />
+		<ee:transform doc:name="Set inputPayload Variable" doc:id="b4f661c1-1d16-4cc0-bfe6-b487cf01d587" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="inputPayload" ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Set OrderNo ProductCode Variables" doc:id="742faa91-835f-4afc-8b2f-bded471e3a92" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="orderNo" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.inputPayload.orderNo]]></ee:set-variable>
+				<ee:set-variable variableName="productCode" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.inputPayload.productCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="Fetch Data" doc:id="dff06192-e535-4963-a0f3-717e1018bf7a" name="fetch-from-orders-products" />
+		<flow-ref doc:name="Responses" doc:id="467b903b-41b8-4cb0-8ee1-b71ca9f2bf0b" name="response-flow-choices" />
+		<logger level="INFO" doc:name="End Log" doc:id="f8894743-08cf-4f8e-9690-e5afaea70b68" message='Message: "Completed creating purchase order detail flow"' />
+    
+</flow>
+	</mule>

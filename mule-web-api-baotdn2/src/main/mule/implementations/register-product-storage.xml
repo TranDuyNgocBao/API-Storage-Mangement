@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd">
+	
+	<flow name="post:\product:application\json:mule-product-api-config">
+		<logger level="INFO" doc:name="Logger" doc:id="decc08d4-fe4d-4951-9774-11ec3a433cb6" message="#[payload]"/>
+		<ee:transform doc:name="Set Input Payload" doc:id="0cbb5442-df50-4037-b7cf-b6a61ba0a943" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[payload.productCode]" doc:name="Set productCode Variable" doc:id="dfbe3d82-b24f-4044-8870-31053fe133dc" variableName="productCode"/>
+		<logger level="INFO" doc:name="Start Log" doc:id="6a00a64f-633b-4b28-809e-dc6bbdb2a9d0" message='Transaction ID: #[vars.transactionId], Message: "Start registing product flow"'/>
+		<flow-ref doc:name="Flow Reference" doc:id="0398a583-4fda-482e-8d0c-b6d47ada8219" name="register-product-single-input" />
+		<ee:transform doc:name="Prepare Response" doc:id="388bae1b-b4ab-41f8-af15-4cf1c6b12070" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	productCode: vars.productCode as String
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End Log" doc:id="c2b07ad9-6f23-4e88-b824-b85032ffe4d8" message='Message: "Completed registering product flow"'/>
+		<error-handler>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="77a5a080-89d2-4b5e-9452-a2219ea885fc" type="DB:QUERY_EXECUTION">
+				<ee:transform doc:name="Error Response" doc:id="ee2adbed-9af0-405e-9c82-4a0d3f7548b3" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"code": 400,
+	"message": "Bad Request",
+	"description": error.description,
+	"dateTime": now() as String {format: "yyyy-MM-dd'T'HH:mm:ss'Z'"},
+	"transactionId": vars.transactionId
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+
+    </flow>
+	</mule>

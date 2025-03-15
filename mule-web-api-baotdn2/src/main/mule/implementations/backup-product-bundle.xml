@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns:sockets="http://www.mulesoft.org/schema/mule/sockets"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:ftp="http://www.mulesoft.org/schema/mule/ftp"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ftp http://www.mulesoft.org/schema/mule/ftp/current/mule-ftp.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/sockets http://www.mulesoft.org/schema/mule/sockets/current/mule-sockets.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
+	
+	<flow name="post:\bundle_product:text\csv:mule-product-api-config">
+		<!-- Transform CSV to JSON -->
+
+		<!-- Log Payload Before Batch -->
+		<logger level="INFO"
+			message="Started Extracting Database" doc:name="Start Log" />
+
+		<!-- Check If Payload is Empty -->
+		<http:request method="GET" doc:name="Request Fetch Products" doc:id="9780ba21-3a0e-45b5-805b-58b09b2a4835" config-ref="HTTP_Request_configuration" path="/product"/>
+		<!-- [STUDIO:"Back Up Products "]<sftp:write doc:name="Back Up Products " doc:id="43ea2abf-0d95-4797-bcfc-78837417c61c" config-ref="SFTP_Config" path='#["backUp/" ++ "productBackUp-" ++ now() as DateTime as String ++ ".csv"&#93;'>
+			<sftp:content ><![CDATA[#[%dw 2.0
+output application/csv
+&#45;&#45;-
+payload&#93;&#93;&#93;></sftp:content>
+		</sftp:write> [STUDIO] -->
+		<file:write doc:name="Write" doc:id="a032ec1a-890c-4bed-8304-d998d2b698e9" path='#["E:\Work_Papers\MuleSoft_Udemy\MuleSoft_training\Capstone-Projects\BackUp_Files/productsBackUp_" ++ vars.transactionId as String ++ ".csv"]'>
+			<file:content ><![CDATA[#[%dw 2.0
+output application/csv
+---
+payload]]]></file:content>
+		</file:write>
+		<ee:transform doc:name="Transform Message" doc:id="1cf57db0-05cb-4f53-9e25-66ff155d1904" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End Log" doc:id="63a84e0a-7ef3-42f9-adf2-7f96c2b0d2a5" message="Completed Back Up Database" />
+	
+</flow>
+
+</mule>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="put:\product:application\json:mule-product-api-config">
+		<ee:transform doc:name="Set Input Payload" doc:id="ae21f49f-0ef1-43a2-8eac-885c35682a7b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "productCode": payload.productCode,
+  "productName": payload.productName,
+  "unit": payload.unit,
+  "quantityInStock": payload.quantityInStock,
+  "unitPrice": payload.unitPrice,
+  "createdByDate": payload.createdByDate,
+  "createdBy": payload.createdBy
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[payload.productCode]" doc:name="Set productCode Variable" doc:id="26d6de45-04e9-4b15-9152-7b2cf74b0ebe" variableName="productCode" />
+		<logger level="INFO" doc:name="Start Log" doc:id="0a5e0c83-740d-41aa-b5f0-d9a0cae85403" message='Transaction ID: #[vars.transactionId], Message: "Start updating product flow"' />
+		<flow-ref doc:name="Flow Reference" doc:id="2362a06d-47ae-4c83-a53b-497eda56b1b4" name="update-product-by-productCode-single-input" />
+		<choice doc:name="Choice" doc:id="19496924-a43f-4546-af5f-01de79778067" >
+			<when expression="#[payload.affectedRows &gt; 0]">
+				<ee:transform doc:name="Prepare Success Response" doc:id="070a1457-59b7-4896-b620-7bad58d2a7c6">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	productCode: vars.productCode as String,
+	message: "Update Successfully"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Prepare Not Found Response" doc:id="0dd60857-91e8-4572-a066-14e93ad396bf">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "The productCode does not exist in database"
+}]]></ee:set-payload>
+			</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[404]]></ee:set-variable>
+					</ee:variables>
+		</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="End Log" doc:id="f339804c-6a7c-49cc-a697-cef40ba0bb08" message='Message: "Completed updating product flow"' />
+    
+</flow>
+	</mule>

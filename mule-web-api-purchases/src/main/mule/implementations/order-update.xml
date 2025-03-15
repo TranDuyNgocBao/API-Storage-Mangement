@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="put:\orders:application\json:mule-purchases-sapi-config">
+		<logger level="INFO" doc:name="Start Log" doc:id="22b98791-a858-45ad-84ca-2e25c98cacdb" message='Transaction ID: #[vars.transactionId], Message: "Start updating purchase order flow"' />
+		<ee:transform doc:name="Set Input Payload" doc:id="c5f4b2f2-ee25-49cf-a397-002aacd50a8e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "orderNo": payload.orderNo,
+  "orderDate": payload.orderDate,
+  "title": payload.title,
+  "description": payload.description,
+  "createdByDate": payload.createdByDate,
+  "createdBy": payload.createdBy
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="Set orderNo &amp; orderDate Variables" doc:id="4a0d9fad-2255-4fb4-bd10-f94c1c693b7c" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="orderNo" ><![CDATA[%dw 2.0
+output application/java
+---
+payload.orderNo]]></ee:set-variable>
+				<ee:set-variable variableName="orderDate" ><![CDATA[%dw 2.0
+output application/java
+---
+payload.orderDate]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="Flow Reference" doc:id="fb19f732-a832-4913-bb0d-620c709e51e8" name="update-order-db" />
+		<choice doc:name="Choice" doc:id="ddccb00c-08b6-43fe-92ff-6578de0d0cb6" >
+			<when expression="#[payload.affectedRows &gt; 0]" >
+				<ee:transform doc:name="Prepare Success Response" doc:id="720df264-5e6e-400d-aab8-c2f22b991fea" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	OrderNo: vars.orderNo as String,
+	OrderDate: vars.orderDate as String,
+	Message: "Updated Successfully"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Prepare Not Found Response" doc:id="e653cff2-b443-4764-a673-d2711b4cbfe0" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	Message: "The orderNo or orderDate does not match in database"
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[404]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="End Log" doc:id="68c27c1e-46a0-48c7-aee4-5fa95243ba5e" message='Message: "Completed updating purchase order flow"' />
+
+    </flow>
+	</mule>

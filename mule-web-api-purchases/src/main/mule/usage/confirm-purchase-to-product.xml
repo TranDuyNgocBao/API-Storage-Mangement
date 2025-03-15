@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	
+	<sub-flow name="check-and-update-product-in-storage" doc:id="b743cc9b-22f1-4437-b672-9ae8a31bf87f" >
+		<choice doc:name="Choice" doc:id="5a379a9f-d351-4598-bd99-75e3bb05ba6b">
+			<when expression='#[typeOf(payload) ~= "Array"]'>
+				<set-variable value="#[payload[0]]" doc:name="Set orderDetailPayload Variable" doc:id="2cda65bc-4be1-4760-b7be-0be0170383d8" variableName="orderDetailPayload" />
+				<http:request method="GET" doc:name="Request to Fetch Product " doc:id="51687a7d-ba8c-4acb-8a6b-1c9173720094" path="/product" config-ref="HTTP_Request_Product_configuration">
+				<http:query-params><![CDATA[#[{
+	productCode: vars.orderDetailPayload.ProductCode
+}]]]></http:query-params>
+			</http:request>
+				<ee:transform doc:name="Transform to Update Payload" doc:id="6065499b-b25f-40ae-8a52-2a2cd43afede">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var newQuantity = vars.orderDetailPayload.Quantity as Number
+var oldQuantity = payload[0].QuantityInStock as Number
+var newPrice = vars.orderDetailPayload.PurchasePrice as Number
+var oldPrice = payload[0].UnitPrice as Number
+---
+{
+  "productCode": vars.orderDetailPayload.ProductCode,
+  "quantityInStock": newQuantity + oldQuantity,
+  "unitPrice": (oldQuantity*oldPrice + newQuantity*newPrice) / (oldQuantity + newQuantity)
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+				<http:request method="PUT" doc:name="Request to Update Product by Order Details" doc:id="3112c090-744e-4f51-8bd5-99935a5447e1" path="/product" config-ref="HTTP_Request_Product_configuration" />
+				<http:request method="GET" doc:name="Request to Fetch Product " doc:id="fdca5184-a4d0-4885-9097-65cce3d80606" config-ref="HTTP_Request_Product_configuration" path="/product">
+					<http:query-params><![CDATA[#[{
+	productCode: vars.orderDetailPayload.ProductCode
+}]]]></http:query-params>
+				</http:request>
+			</when>
+			<otherwise>
+				<ee:transform doc:name="Prepare Response" doc:id="0bf8346a-e57a-4495-adff-a95c5dd8df30">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+"Order Does Not Exist in Database"]]></ee:set-payload>
+					</ee:message>
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<flow name="get:\confirm_purchases:mule-purchases-sapi-config" doc:id="be577dee-b223-4db0-a11e-ac9f3d4b7a03" >
+		<logger level="INFO" doc:name="Start Log" doc:id="c9e81648-f241-47ff-ae5f-f745f4427966" message='Transaction ID: #[vars.transactionId], Message: "Confirm Purchases to Update Products"' />
+		<http:request method="GET" doc:name="Request Fetch Purchase Order Detail" doc:id="d4c54062-e6e7-43fa-9ea2-29fa13c8a0e2" config-ref="HTTP_Request_Purchase_configuration" path="/orderDetails">
+			<http:query-params ><![CDATA[#[{
+	orderNo: attributes.queryParams.orderNo,
+	orderDate: attributes.queryParams.orderDate,
+	productCode: attributes.queryParams.productCode
+}]]]></http:query-params>
+		</http:request>
+		<flow-ref doc:name="Flow Reference" doc:id="b922017c-0257-4e20-b346-2c573c6881ab" name="check-and-update-product-in-storage" />
+		<logger level="INFO" doc:name="End Log" doc:id="54bf9f64-ebda-4b6a-88e7-2f4fd47fc29b" message='"Completed Confirm Purchases"'/>
+	</flow>
+</mule>

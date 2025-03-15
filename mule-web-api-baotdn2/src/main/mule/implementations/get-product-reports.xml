@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="get:\product:mule-product-api-config">
+		<logger level="INFO" doc:name="Start Log" doc:id="272b4b9e-657c-43e8-9440-839330de0fae" message='Transaction ID: #[vars.transactionId], Message: "Start getting product flow"' />
+		<set-variable value="#[attributes.queryParams]" doc:name="Set Query Params" doc:id="896df3a0-48a7-42cf-acca-fa2c5e90f586" variableName="queryParams"/>
+		<set-variable value="#[&quot;SELECT * FROM &quot; ++ Mule::p('secure::db.mls-mysql.product-table') ++ &quot; WHERE 1=1&quot;]" doc:name="Set Base Query" doc:id="dc39346d-2fa7-4e9c-adc4-747f2d5a6c15" variableName="sqlQuery"/>
+		<choice doc:name="Check Query Params">
+        <when expression="#[vars.queryParams.productCode != null]">
+            <set-variable value="#[vars.sqlQuery ++ ' AND ProductCode = :productCode']" doc:name="Add ProductCode Condition" variableName="sqlQuery" doc:id="853425c0-9d57-4f04-b17e-2f5295ce14ce"/>
+        </when>
+    </choice>
+    <choice doc:name="Check Query Params">
+        <when expression="#[vars.queryParams.productName != null]">
+            <set-variable value="#[vars.sqlQuery ++ ' AND ProductName = :productName']" doc:name="Add ProductName Condition" variableName="sqlQuery" doc:id="c61f7e10-3833-4ada-969b-81e1be0e8077"/>
+        </when>
+    </choice>
+    <choice doc:name="Check Query Params">
+        <when expression="#[vars.queryParams.unit != null]">
+            <set-variable value="#[vars.sqlQuery ++ ' AND Unit = :unit']" doc:name="Add Unit Condition" variableName="sqlQuery"/>
+        </when>
+    </choice>
+    <choice doc:name="Check Query Params">
+        <when expression="#[vars.queryParams.unitPrice != null]">
+            <set-variable value="#[vars.sqlQuery ++ ' AND UnitPrice = :unitPrice']" doc:name="Add UnitPrice Condition" variableName="sqlQuery"/>
+        </when>
+    </choice>
+    <choice doc:name="Check Query Params">
+        <when expression="#[vars.queryParams.createdByDate != null]">
+            <set-variable value="#[vars.sqlQuery ++ ' AND CreatedByDate = :createdByDate']" doc:name="Add CreatedByDate Condition" variableName="sqlQuery"/>
+        </when>
+    </choice>
+    <choice doc:name="Check Query Params">
+        <when expression="#[vars.queryParams.createBy != null]">
+            <set-variable value="#[vars.sqlQuery ++ ' AND CreatedBy = :createdBy']" doc:name="Add CreatedBy Condition" variableName="sqlQuery"/>
+        </when>
+    </choice>
+		<flow-ref doc:name="Flow Reference" doc:id="7d88688f-fd35-49b4-b375-3d8e00b092df" name="fetch-products-all" />
+		<choice doc:name="Choice" doc:id="6f110d28-767b-448a-b390-9cbc062278e5" >
+			<when expression="#[!isEmpty(payload)]">
+				<ee:transform doc:name="Transform Message" doc:id="b5ce4842-10ba-4478-b3ce-a44c09a26fd0">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="httpStatus"><![CDATA[200]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+			</when>
+			<otherwise>
+				<ee:transform doc:name="Transform Message" doc:id="ec324ba5-aa00-4637-9141-ab989a328258">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+"No matching data found!"]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="httpStatus"><![CDATA[200]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="End Log" doc:id="282bbb02-0c7a-4a04-87aa-898b78fa8b83" message='Message: "Completed getting product flow"' />
+
+    </flow>
+	</mule>

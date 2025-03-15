@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<sub-flow name="fetch-products-all" doc:id="25a7941d-2d1b-4f5c-82a2-e1f068bf7171" >
+		<db:select doc:name="Fetch Products" doc:id="303f8479-2a52-41cf-8cfc-d829576db619" config-ref="Database_Config">
+			<db:sql><![CDATA[#[vars.sqlQuery]]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	productCode: vars.queryParams.productCode,
+	unitPrice: vars.queryParams.unitPrice,
+	productName: vars.queryParams.productName,
+	unit: vars.queryParams.unit,
+	createdByDate: vars.queryParams.createdByDate,
+	createdBy: vars.queryParams.createBy
+}]]]></db:input-parameters>
+		</db:select>
+	</sub-flow>
+	<sub-flow name="delete-product-single-input" doc:id="b8781be2-75c1-4e7f-8371-88299a43f7f3" >
+		<db:delete doc:name="Delete Product Single Input" doc:id="77dfcdab-018a-46a1-9d56-b2f88f2f03fc" config-ref="Database_Config">
+			<db:sql><![CDATA[DELETE FROM MLSDB_BaoTDN2.Products WHERE ProductCode = :productCode]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	productCode: vars.productCode
+}]]]></db:input-parameters>
+		</db:delete>
+	</sub-flow>
+	<sub-flow name="update-product-by-productCode-single-input" doc:id="b35b0c53-3171-48b6-883b-ea070b7aff59" >
+		<db:update doc:name="Update Product Single Input" doc:id="977a0b1d-8e8d-4e1e-ad84-f04d6d3acb6a" config-ref="Database_Config">
+			<db:sql><![CDATA[UPDATE MLSDB_BaoTDN2.Products
+SET
+	ProductName = COALESCE(:productName, ProductName),
+	Unit = COALESCE(:unit, Unit),
+	QuantityInStock = COALESCE(:quantityInStock, QuantityInStock),
+	UnitPrice = COALESCE(:unitPrice, UnitPrice),
+	CreatedByDate = COALESCE(:createdByDate, CreatedByDate),
+	CreatedBy = COALESCE(:createdBy, CreatedBy)
+WHERE
+    ProductCode = :productCode]]></db:sql>
+			<db:input-parameters><![CDATA[#[payload]]]></db:input-parameters>
+		</db:update>
+	</sub-flow>
+	<sub-flow name="register-product-single-input" doc:id="df735c88-3635-420c-a5f3-38e2151dbad8" >
+		<db:insert doc:name="Insert Product Single Input" doc:id="94ebad61-b281-42b1-8d3f-2c2aedf320a6" config-ref="Database_Config">
+			<db:sql><![CDATA[INSERT INTO MLSDB_BaoTDN2.Products (
+    ProductCode,
+    ProductName,
+    Unit,
+    QuantityInStock,
+    UnitPrice,
+    CreatedByDate,
+    CreatedBy
+)
+VALUES (
+    :productCode,
+    :productName,
+    :unit,
+    :quantityInStock,
+    :unitPrice,
+    :createdByDate,
+    :createdBy
+)]]></db:sql>
+			<db:input-parameters><![CDATA[#[payload]]]></db:input-parameters>
+		</db:insert>
+	</sub-flow>
+</mule>

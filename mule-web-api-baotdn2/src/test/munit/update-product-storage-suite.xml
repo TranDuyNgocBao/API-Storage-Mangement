@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="update-product-storage-suite.xml" />
+	<munit:test name="put:\product:application\json:mule-product-api-config-success-test" doc:id="6b37ea2e-0867-45b9-9d01-6ba0cd8602b9" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Update Product Single Input" doc:id="852becc4-083d-4714-8d2a-8f6894d911f4" processor="db:update">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="977a0b1d-8e8d-4e1e-ad84-f04d6d3acb6a" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java --- readUrl('classpath://putproductapplicationjsonmuleproductapiconfigsuccesstest\mock_payload.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://putproductapplicationjsonmuleproductapiconfigsuccesstest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="productCode" value="#[output application/json --- readUrl('classpath://putproductapplicationjsonmuleproductapiconfigsuccesstest\mock_variable_1.dwl')]" mediaType="application/json" encoding="UTF-8" />
+						<munit-tools:variable key="transactionId" value="#[output application/java --- readUrl('classpath://putproductapplicationjsonmuleproductapiconfigsuccesstest\mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:spy doc:name="Spy Prepare Success Response" doc:id="6fed1c35-8c7a-4667-b193-8d53e7caec30" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="070a1457-59b7-4896-b620-7bad58d2a7c6" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="d000cbfb-5d27-4a9c-ac3a-b7f594774107" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import putproductapplicationjsonmuleproductapiconfigsuccesstest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="5c193f17-0dfa-47cb-8b5f-e5b67d10a9b3" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import putproductapplicationjsonmuleproductapiconfigsuccesstest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit-tools:spy doc:name="Spy Set Input Payload" doc:id="981c1ecf-ba3d-4939-8bc7-f2210a71bf1d" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ae21f49f-0ef1-43a2-8eac-885c35682a7b" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="1423a836-06bd-4f95-a528-82ec933795f7" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import putproductapplicationjsonmuleproductapiconfigsuccesstest::spy_assert_payload2
+---
+spy_assert_payload2::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="bd3fe888-c683-48ef-acd3-24bd05f66f74" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import putproductapplicationjsonmuleproductapiconfigsuccesstest::spy_assert_payload3
+---
+spy_assert_payload3::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="f121c21d-e9de-4572-9701-9a1d8cd6693e" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://putproductapplicationjsonmuleproductapiconfigsuccesstest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://putproductapplicationjsonmuleproductapiconfigsuccesstest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://putproductapplicationjsonmuleproductapiconfigsuccesstest\set-event_variable_.dwl')]" />
+					<munit:variable key="transactionId" value="#[output application/java --- readUrl('classpath://putproductapplicationjsonmuleproductapiconfigsuccesstest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to put:\product:application\json:mule-product-api-config" doc:id="faa20ed2-9d01-424a-8b7e-c5eb47e5b5ba" name="put:\product:application\json:mule-product-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="981bcd16-0d40-4fca-9874-eba9d3e027ac" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import putproductapplicationjsonmuleproductapiconfigsuccesstest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Prepare Success Response" doc:id="815ecc6c-6203-458f-bf4b-fba4f1204bf3" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="070a1457-59b7-4896-b620-7bad58d2a7c6" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Set Input Payload" doc:id="188aa018-e76c-4971-8513-3576a152bb5b" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ae21f49f-0ef1-43a2-8eac-885c35682a7b" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="put:\product:application\json:mule-product-api-config-not-found-test" doc:id="058fc069-5ffc-4221-8ed0-090740bb4c10" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Update Product Single Input" doc:id="b6e4a4f1-0d9a-4720-be3e-f6959121b95a" processor="db:update">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="977a0b1d-8e8d-4e1e-ad84-f04d6d3acb6a" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java --- readUrl('classpath://putproductapplicationjsonmuleproductapiconfignotfoundtest\mock_payload.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://putproductapplicationjsonmuleproductapiconfignotfoundtest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="productCode" value="#[output application/json --- readUrl('classpath://putproductapplicationjsonmuleproductapiconfignotfoundtest\mock_variable_1.dwl')]" mediaType="application/json" encoding="UTF-8" />
+						<munit-tools:variable key="transactionId" value="#[output application/java --- readUrl('classpath://putproductapplicationjsonmuleproductapiconfignotfoundtest\mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:spy doc:name="Spy Prepare Not Found Response" doc:id="047a8040-f764-4079-8df0-29a0614f3e47" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="0dd60857-91e8-4572-a066-14e93ad396bf" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="027382bc-5015-42ed-a4b9-e19736982e88" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import putproductapplicationjsonmuleproductapiconfignotfoundtest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="432b2c06-4529-4351-9073-a80de0c62ad9" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import putproductapplicationjsonmuleproductapiconfignotfoundtest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit-tools:spy doc:name="Spy Set Input Payload" doc:id="deb0f3c0-62fb-47e6-8659-f17e0e80b0ba" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ae21f49f-0ef1-43a2-8eac-885c35682a7b" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="e2a66e0d-cb04-491c-b074-1b4b83102884" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import putproductapplicationjsonmuleproductapiconfignotfoundtest::spy_assert_payload2
+---
+spy_assert_payload2::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="b418beb4-8580-4b9e-bf09-756e70815d7b" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import putproductapplicationjsonmuleproductapiconfignotfoundtest::spy_assert_payload3
+---
+spy_assert_payload3::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="0661516a-0fc7-4460-b766-8eb88a4a3c56" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://putproductapplicationjsonmuleproductapiconfignotfoundtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://putproductapplicationjsonmuleproductapiconfignotfoundtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://putproductapplicationjsonmuleproductapiconfignotfoundtest\set-event_variable_.dwl')]" />
+					<munit:variable key="transactionId" value="#[output application/java --- readUrl('classpath://putproductapplicationjsonmuleproductapiconfignotfoundtest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to put:\product:application\json:mule-product-api-config" doc:id="1527824a-0e90-4b32-95fe-2c66ebb08aec" name="put:\product:application\json:mule-product-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="d84675c5-d3f8-4043-9383-900914d59168" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import putproductapplicationjsonmuleproductapiconfignotfoundtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Prepare Not Found Response" doc:id="27486365-f7c8-492a-828d-fdfe27d49dac" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="0dd60857-91e8-4572-a066-14e93ad396bf" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Set Input Payload" doc:id="79d1f53d-cebc-4632-8642-7b48c7cb15ff" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ae21f49f-0ef1-43a2-8eac-885c35682a7b" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

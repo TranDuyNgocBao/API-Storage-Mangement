@@ -1,0 +1,23 @@
+http:
+  protocol: "HTTP"
+  host: "localhost"
+  port: "8081"
+  supportPort: "8084"
+  connections: "6"
+  productbase: "products/v1"
+  
+db:
+  mls-mysql:
+    host: "127.0.0.1"
+    port: "3306"
+    user: "root"
+    password: "![QQm6zKYXZYcKIGom+conhQ==]"
+    product-table: "MLSDB_BaoTDN2.Products"
+
+sftp:
+  mls:
+    directory: "Products"
+    host: "us-east-1.sftpcloud.io"
+    port: "22"
+    username: "cc36cbfacf434dce9819f4e35168b4b9"
+    password: "![M+TvcFBMWigse3DPWa/e+y4xtCsAM0CCfvJFADI+fUK8CScFkDkpA4rNtufch4Iw]"

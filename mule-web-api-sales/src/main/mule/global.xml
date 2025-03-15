@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd  http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+    <http:listener-config name="mule-sales-sapi-httpListenerConfig" basePath="sales">
+        <http:listener-connection host="0.0.0.0" port="${secure::http.port}" />
+    </http:listener-config>
+    <apikit:config name="mule-sales-sapi-config" api="resource::548af11c-1e3f-4199-898f-58d750ed8aaf:mule-sales-sapi:1.0.2:raml:zip:mule-sales-sapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <db:config name="Database_Config" doc:name="Database Config" doc:id="8bda4bec-7896-4ec3-b136-2cf307022cdd">
+        <db:my-sql-connection host="${secure::db.mls-mysql.host}" port="${secure::db.mls-mysql.port}" user="${secure::db.mls-mysql.user}" password="${secure::db.mls-mysql.password}" />
+    </db:config>
+    <secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="1ce5b94c-8930-4d4a-8e19-b2e4cc342726" file="environments/local.yaml" key="abcdef0123456789" />
+    <http:request-config name="HTTP_Request_Product_configuration" doc:name="HTTP Request configuration" doc:id="70616e2e-8d0a-47e6-a549-351a616ab5ae" basePath="/${secure::http.productbase}">
+        <http:request-connection host="${secure::http.producthost}" port="${secure::http.portproduct}" maxConnections="${secure::http.connections}" connectionIdleTimeout="300000"/>
+    </http:request-config>
+    <http:request-config name="HTTP_Request_Sale_configuration" doc:name="HTTP Request configuration" doc:id="770b659e-007e-46e4-abd2-05276b846f2d" basePath="/${secure::http.salebase}">
+        <http:request-connection host="${secure::http.host}" port="${secure::http.port}" maxConnections="${secure::http.connections}" connectionIdleTimeout="300000"/>
+    </http:request-config>
+</mule>

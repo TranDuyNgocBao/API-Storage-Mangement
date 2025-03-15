@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="delete:\orderDetails:mule-purchases-sapi-config">
+		<logger level="INFO" doc:name="Start Log" doc:id="fecfe1d3-419c-46cd-a6c9-930396203a09" message='Transaction ID: #[vars.transactionId], Message: "Start deleting purchase order detail flow"' />
+		<ee:transform doc:name="Set Input Query Param Variables" doc:id="cba86cd6-159a-42e0-bcd2-33a9c80318a4" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="orderNo" ><![CDATA[%dw 2.0
+output application/java
+---
+attributes.queryParams.orderNo]]></ee:set-variable>
+				<ee:set-variable variableName="orderDate" ><![CDATA[%dw 2.0
+output application/java
+---
+attributes.queryParams.orderDate]]></ee:set-variable>
+				<ee:set-variable variableName="productCode" ><![CDATA[%dw 2.0
+output application/java
+---
+attributes.queryParams.productCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="Flow Reference" doc:id="b32ed01d-153a-4d92-92a4-4f66268cf7f0" name="delete-order-detail-db" />
+		<choice doc:name="Choice" doc:id="797b6b71-1764-409f-9d36-dba798f9248f" >
+			<when expression="#[payload != 0]" >
+				<ee:transform doc:name="Success Response" doc:id="8aee45e6-1901-4ad5-8123-8a33b65a807d" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	ProductCode: vars.productCode,
+	OrderNo: vars.orderNo,
+	OrderDate: vars.orderDate,
+	Message: "Success Deleted"
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[200]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Not Found Response" doc:id="ac21719c-c888-464e-85c7-16ffe0e0fc5d" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+"Cannot find data matched in database."]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[404]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="End Log" doc:id="5e4d05b9-31cb-4d78-a6e6-53fe53c767b7" message='Message: "Completed deleting purchase order detail flow"' />
+
+    </flow>
+	</mule>

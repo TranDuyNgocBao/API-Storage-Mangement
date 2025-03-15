@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="get:\orders:mule-sales-sapi-config">
+		<logger level="INFO" doc:name="Start Log" doc:id="5c0b91ba-e772-4a4a-8300-d14de9bfcf91" message='Transaction ID: #[vars.transactionId], Message: "Start getting sale orders flow"' />
+		<set-variable value="#[attributes.queryParams]" doc:name="Set Query Params" doc:id="cb7fa8bf-63de-4065-bbcc-ad9eeefda291" variableName="queryParams" />
+		<set-variable value="#[&quot;SELECT * FROM &quot; ++ Mule::p('secure::db.mls-mysql.sale-order-table') ++ &quot; WHERE 1=1&quot;]" doc:name="Set Base Query" doc:id="897d4c32-eb1a-4b9a-92fb-c863c3d115f7" variableName="sqlQuery" />
+		<choice doc:name="Check Query Params" doc:id="163db9a2-b0cf-429b-9dbd-fdc541cf240c" >
+			<when expression="#[vars.queryParams.orderNo != null]" >
+				<set-variable value="#[vars.sqlQuery ++ ' AND OrderNo = :orderNo']" doc:name="Add OrderNo Condition" doc:id="660e185a-0a3e-45ef-bdc2-917eb1e85464" variableName="sqlQuery" />
+			</when>
+		</choice>
+		<choice doc:name="Check Query Params" doc:id="c01766b8-1d6b-45a0-a944-b145a066f09e" >
+			<when expression="#[vars.queryParams.orderDate != null]" >
+				<set-variable value="#[vars.sqlQuery ++ ' AND OrderDate = :orderDate']" doc:name="Add OrderDate Condition" doc:id="2b3bd0ad-0a63-45a8-96dc-88009d2d442d" variableName="sqlQuery" />
+			</when>
+		</choice>
+		<choice doc:name="Check Query Params" doc:id="4c14661d-ef3d-4136-9393-dd3627a10978" >
+			<when expression="#[vars.queryParams.createdByDate != null]" >
+				<set-variable value="#[vars.sqlQuery ++ ' AND CreatedByDate = :createdByDate']" doc:name="Add CreatedByDate Condition" doc:id="f5afaa1b-96e7-4ba9-9321-773bf0852efa" variableName="sqlQuery" />
+			</when>
+		</choice>
+		<choice doc:name="Check Query Params" doc:id="f65a6544-ea6f-40f3-9273-2f1f8aeb3fe5" >
+			<when expression="#[vars.queryParams.createdBy != null]" >
+				<set-variable value="#[vars.sqlQuery ++ ' AND CreatedBy = :createdBy']" doc:name="Add CreatedBy Condition" doc:id="a4d9e8d1-ac48-47e3-b84e-32786660490b" variableName="sqlQuery" />
+			</when>
+		</choice>
+		<flow-ref doc:name="Flow Reference" doc:id="47298edc-90a6-4920-87f0-58225cd6921c" name="fetch-orders-db" />
+		<choice doc:name="Choice" doc:id="194e4fc7-8171-4ef0-8e66-d2ca0537beda" >
+			<when expression="#[!isEmpty(payload)]" >
+				<ee:transform doc:name="Prepare Response" doc:id="fe8fbdcb-eaf7-4717-9564-fd1aa3546d0e" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[200]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Not Found Response" doc:id="4fab245c-babc-4df9-958b-f2acae58b2be" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+"No matching data found!"]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[200]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="End Log" doc:id="33d43b49-51bf-4ffb-9734-d9801630dfdd" message='Message: "Completed getting sale orders flow"' />
+    
+</flow>
+	</mule>

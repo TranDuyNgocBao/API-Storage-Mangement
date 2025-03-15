@@ -1,0 +1,27 @@
+%dw 2.0
+
+type auto_7eae5708_f15a_4483_8fae_ba8f67a9ab5e_Output_Attributes = {|
+  clientCertificate?: {|
+    publicKey?: {|  |}, 
+    "type"?: String, 
+    encoded?: Binary
+  |}, 
+  headers: {| "x-transaction-id"?: String |}, 
+  listenerPath: String, 
+  method: String, 
+  queryParams: {|
+    orderNo: String, 
+    orderDate: String, 
+    productCode: String
+  |}, 
+  queryString: String, 
+  relativePath: String, 
+  remoteAddress: String, 
+  requestPath: String, 
+  requestUri: String, 
+  scheme: String, 
+  uriParams: {|  |}, 
+  version: String, 
+  localAddress: String
+|}
+

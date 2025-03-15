@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="get:\confirm_sales:mule-sales-sapi-config">
+		<logger level="INFO" doc:name="Start Log" doc:id="24d14b99-06c4-456f-ad9f-0a39ff4579bf" message='Transaction ID: #[vars.transactionId], Message: "Confirm Purchases to Update Products"' />
+		<http:request method="GET" doc:name="Request Fetch Sale Order Detail" doc:id="b0d161a8-9f6c-40a2-8951-12d33e47d548" config-ref="HTTP_Request_Sale_configuration" path="/orderDetails" >
+			<http:query-params ><![CDATA[#[{
+	orderNo: attributes.queryParams.orderNo,
+	orderDate: attributes.queryParams.orderDate,
+	productCode: attributes.queryParams.productCode
+}]]]></http:query-params>
+		</http:request>
+		<choice doc:name="Choice" doc:id="847baf91-83c7-4789-94e1-9e81b382be3b" >
+			<when expression='#[typeOf(payload) ~= "Array"]' >
+				<set-variable value="#[payload[0]]" doc:name="Set orderDetailPayload Variable" doc:id="d4d5f5f7-4969-4a48-b524-f292a220196d" variableName="orderDetailPayload" />
+				<http:request method="GET" doc:name="Request to Fetch Product " doc:id="30bcb1aa-51fa-47ff-b063-6607c17a97c7" config-ref="HTTP_Request_Product_configuration" path="/product" >
+					<http:query-params ><![CDATA[#[{
+	productCode: vars.orderDetailPayload.ProductCode
+}]]]></http:query-params>
+				</http:request>
+				<choice doc:name="Choice" doc:id="fcb0567f-40f9-4185-b25f-a857449c5f98">
+					<when expression="#[vars.orderDetailPayload.Quantity as Number &lt;= payload[0].QuantityInStock as Number]">
+						<ee:transform doc:name="Transform to Update Payload" doc:id="03afe6e9-8662-4c1f-893a-35282392fb1c">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var newQuantity = vars.orderDetailPayload.Quantity as Number
+var oldQuantity = payload[0].QuantityInStock as Number
+---
+{
+  "productCode": vars.orderDetailPayload.ProductCode,
+  "quantityInStock": oldQuantity - newQuantity,
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+						<http:request method="PUT" doc:name="Request to Update Product by Order Details" doc:id="c691e969-1ce5-44a1-8e6f-f7d5a2e7d15a" config-ref="HTTP_Request_Product_configuration" path="/product" />
+						<http:request method="GET" doc:name="Request to Fetch Product " doc:id="52dbbc42-508d-4745-a7b2-0e1813306fac" config-ref="HTTP_Request_Product_configuration" path="/product">
+					<http:query-params><![CDATA[#[{
+	productCode: vars.orderDetailPayload.ProductCode
+}]]]></http:query-params>
+				</http:request>
+					</when>
+					<otherwise>
+						<ee:transform doc:name="Prepare Response" doc:id="36be0e03-0246-4e1b-88b8-e46b0fb6f9d3">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+"The quantity of goods remaining in stock is not enough to make the transaction."]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="httpStatus"><![CDATA[403]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+					</otherwise>
+				</choice>
+			</when>
+			<otherwise>
+				<ee:transform doc:name="Prepare Response" doc:id="59755298-e270-49a9-a400-c63b1a397788">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+"Order Does Not Exist in Database"]]></ee:set-payload>
+					</ee:message>
+							<ee:variables>
+								<ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+							</ee:variables>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="End Log" doc:id="faeeb233-0ceb-4729-8ae2-3385034ed54b" message='"Completed Confirm Sales"' />
+
+    </flow>
+	</mule>

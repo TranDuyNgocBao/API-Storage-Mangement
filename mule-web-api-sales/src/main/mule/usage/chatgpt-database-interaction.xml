@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <flow name="ChatGPT_Database_Flow">
+        <!-- 1. Receive input from the user -->
+        <http:listener path="/chat" config-ref="HTTP_Listener_config_oauth"/>
+        
+        <!-- 2. Query MySQL database -->
+        
+        <!-- 3. Call ChatGPT API -->
+
+        <!-- 4. Store ChatGPT's response in MySQL -->
+
+        <!-- 5. Return response to the user -->
+		<logger level="INFO" doc:name="Start Log" doc:id="24cd3621-805b-4bb2-b7b1-1e16235f5758" message="Started Connect With ChatGPT"/>
+		<set-variable value="#[payload.inputMessage]" doc:name="Set Variable" doc:id="bc629912-b102-434a-b544-c001f1fc75fa" variableName="inputMessage"/>
+		<ee:transform doc:name="Prepare Input To Connect Database" doc:id="1a284397-e6a1-4132-9c40-931c200f4d42" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "user": "root",
+  "password": "123456",
+  "host": "127.0.0.1",
+  "port": "3306",
+  "database": "MLSDB_BaoTDN2"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="POST" doc:name="Request To Connect Database" doc:id="ff8e315b-a6a5-4d91-9f4d-91d42efe0de8" url="http://127.0.0.1:5000/connect"/>
+		<ee:transform doc:name="Prepare Input Message" doc:id="ceca1ebc-aea2-440f-bb83-9e5769cc5534" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "query": vars.inputMessage,
+  "history": []
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="POST" doc:name="Request To ChatBot API" doc:id="d68434ca-381e-4b77-89c3-2b17adca5384" url="http://127.0.0.1:5000/query"/>
+		<logger level="INFO" doc:name="End Log" doc:id="6c2380c1-2d1a-47e9-9d8b-9f097cca5455" message="Completed flow: #[payload]"/>
+    
+</flow>
+	</mule>

@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_b35b0c53_3171_48b6_883b_ea070b7aff59_Output_Variables_productCode = String
+

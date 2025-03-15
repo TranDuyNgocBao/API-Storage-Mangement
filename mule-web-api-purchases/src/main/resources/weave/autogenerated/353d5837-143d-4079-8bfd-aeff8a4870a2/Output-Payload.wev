@@ -1,0 +1,8 @@
+%dw 2.0
+
+type auto_353d5837_143d_4079_8bfd_aeff8a4870a2_Output_Payload = {
+  orderNo: String, 
+  productCode: String, 
+  _?: Any
+}
+

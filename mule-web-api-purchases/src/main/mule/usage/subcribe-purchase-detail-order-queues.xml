@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="Update-Product-In-Warehouse" doc:id="f2be4a52-3273-4991-b258-7db93e9852df" >
+		<parallel-foreach doc:name="Parallel For Each" doc:id="9ac164b6-c498-4152-8a01-417f3120f574">
+			<logger level="INFO" doc:name="Print Payload" doc:id="8850a549-1d51-4bfc-9eb4-b10659396b58" message="#[payload]" />
+			<set-variable value="#[payload]" doc:name="Set orderDetailPayload Variable" doc:id="4bd80042-9f91-49f4-ba9d-4fdf038d1645" variableName="orderDetailPayload" />
+			<http:request method="GET" doc:name="Request to Fetch Product " doc:id="8e754cbf-ebd7-42b0-afa2-574c76ca8f9f" config-ref="HTTP_Request_Product_configuration" path="/product">
+				<http:query-params><![CDATA[#[{
+	productCode: vars.orderDetailPayload.ProductCode
+}]]]></http:query-params>
+			</http:request>
+			<ee:transform doc:name="Transform to Update Payload" doc:id="4bd52646-11b4-405d-9228-0dae23e74b79">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var newQuantity = vars.orderDetailPayload.Quantity as Number
+var oldQuantity = payload[0].QuantityInStock as Number
+var newPrice = vars.orderDetailPayload.PurchasePrice as Number
+var oldPrice = payload[0].UnitPrice as Number
+---
+{
+  "productCode": vars.orderDetailPayload.ProductCode,
+  "quantityInStock": newQuantity + oldQuantity,
+  "unitPrice": (oldQuantity*oldPrice + newQuantity*newPrice) / (oldQuantity + newQuantity)
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<http:request method="PUT" doc:name="Request to Update Product by Order Details" doc:id="0379d3c8-2e80-4e0a-a13a-acfd22bcbf6a" config-ref="HTTP_Request_Product_configuration" path="/product" />
+		</parallel-foreach>
+	</sub-flow>
+	<flow name="subcribe-purchase-detail-order-queuesFlow" doc:id="c46736af-f291-4f82-a8e7-61bcccd3a4cc" >
+		<http:listener doc:name="Listener" doc:id="ee88f8f6-5b53-4878-a031-a677a5685331" config-ref="HTTP_Listener_config" path="/subcribe-queue"/>
+		<logger level="INFO" doc:name="Start Log" doc:id="8bb49da0-e418-48af-b157-99eb40b8ef18" message="Started confirm many orders"/>
+		<jms:consume doc:name="Consume" doc:id="8797a33b-348f-48b3-840a-0e8bf3997935" config-ref="JMS_Config" destination="Q.PURCHASE.INVOICES	" contentType="application/json" encoding="UTF-8">
+			<jms:consumer-type >
+				<jms:queue-consumer />
+			</jms:consumer-type>
+		</jms:consume>
+		<ee:transform doc:name="Set InputPayload Variable And Fix Payload" doc:id="d5af7869-b7f4-48bb-a611-bcf5715fbd95" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload.Details map ((detail, index) -> {
+    "ProductCode": detail.ProductCode,
+    "Quantity": detail.Quantity,
+    "PurchasePrice": detail.PurchasePrice,
+    "Tax": detail.Tax
+})]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="inputPayload" ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="Flow Reference" doc:id="841898ce-a3ed-4491-a8cf-af90403bc388" name="Update-Product-In-Warehouse" />
+		<http:request method="GET" doc:name="Request to Fetch Products" doc:id="cc2a2ae6-3604-4549-bf56-02d1ed18bbd3" config-ref="HTTP_Request_Product_configuration" path="/product"/>
+		<logger level="INFO" doc:name="End Log" doc:id="5517ef2c-dcb4-45bb-be26-a75521a57b41" message="Completed confirm many orders" />
+	</flow>
+</mule>

@@ -1,0 +1,10 @@
+ProductCode,ProductName,Unit,QuantityInStock,UnitPrice,CreatedByDate,CreatedBy
+A00001,Soft Drink,Box,20,201,2/16/2025,BaoTDN2
+B00001,Fresh Milk,Box,12,150,1/1/2024,BaoTDN2
+C00003,Soft Drink,Box,20,200,2/16/2025,BaoTDN2
+A00001,Soft Drink,Box,20,201,2/21/2025,BaoTDN2
+B00001,Fresh Milk,Box,12,150,2/21/2025,BaoTDN2
+C00003,Soft Drink,Box,20,200,2/21/2025,BaoTDN2
+D00004,Fried Meat,Can,15,300,,
+E00005,Fresh Rice,Bag,30,100,,
+F00006,Snacks,Bag,100,20,,

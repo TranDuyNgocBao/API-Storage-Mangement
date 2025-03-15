@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd  http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd  http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+    <http:listener-config name="mule-product-api-httpListenerConfig" basePath="products">
+        <http:listener-connection host="0.0.0.0" port="${secure::http.port}" />
+    </http:listener-config>
+    <http:listener-config name="HTTP_Listener_config_Support" doc:name="HTTP Listener config" doc:id="377e6263-010e-47d1-a259-40e374ece1cf" basePath="bulk" >
+		<http:listener-connection host="0.0.0.0" port="${secure::http.supportPort}" />
+	</http:listener-config>
+    <apikit:config name="mule-product-api-config" api="resource::548af11c-1e3f-4199-898f-58d750ed8aaf:mule-product-api:1.0.3:raml:zip:mule-product-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <db:config name="Database_Config" doc:name="Database Config" doc:id="824f969d-597f-46b3-b6d8-0542a59fd281">
+        <db:my-sql-connection host="${secure::db.mls-mysql.host}" port="${secure::db.mls-mysql.port}" user="${secure::db.mls-mysql.user}" password="${secure::db.mls-mysql.password}" />
+    </db:config>
+    <secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="a1f4b5ee-583a-47b9-9cea-d1fb02ae6a54" file="environments/local.yaml" key="abcdef0123456789" />
+	<sftp:config name="SFTP_Config" doc:name="SFTP Config" doc:id="9154e099-14ed-4b63-a5b1-055fa4a9516c" >
+		<sftp:connection workingDir="${secure::sftp.mls.directory}" host="${secure::sftp.mls.host}" username="${secure::sftp.mls.username}" password="${secure::sftp.mls.password}" port="${secure::sftp.mls.port}" connectionTimeout="100" responseTimeout="100"/>
+	</sftp:config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="b9e3b363-3320-4a0e-92dc-6c865c3df19e" basePath="/${secure::http.productbase}">
+		<http:request-connection host="${secure::http.host}" port="${secure::http.port}" maxConnections="${secure::http.connections}" protocol="${secure::http.protocol}"/>
+	</http:request-config>
+</mule>

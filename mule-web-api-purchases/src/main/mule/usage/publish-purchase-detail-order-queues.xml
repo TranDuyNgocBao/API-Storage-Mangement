@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="85a3f062-9c66-4c33-ae13-90614210af20" basePath="jms" >
+		<http:listener-connection host="0.0.0.0" port="8085" />
+	</http:listener-config>
+	<jms:config name="JMS_Config" doc:name="JMS Config" doc:id="5f5cc115-4ff7-41d6-acd4-cf2fa8283798" >
+		<jms:active-mq-connection username="admin" password="admin" >
+			<jms:factory-configuration brokerUrl="tcp://0.0.0.0:61616" />
+		</jms:active-mq-connection>
+	</jms:config>
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="f9423a29-bd07-4667-871e-a0b6a5f4f110" />
+	<flow name="publish-purchase-detail-order-topicsFlow" doc:id="5f1edae9-5a4b-481d-8931-61587fc52717" >
+		<http:listener doc:name="Listener" doc:id="d71728d3-64a4-4c7d-b89b-b7d80e775bbb" config-ref="HTTP_Listener_config" path="/publish-queue/{orderNo}/{orderDate}"/>
+		<logger level="INFO" doc:name="Start Log" doc:id="ad4d8520-6182-4753-a5ae-d1d661058268" message="Start Publishing Queue Messages"/>
+		<ee:transform doc:name="Set OrderNo and OrderDate Variable" doc:id="a86bf33a-a1d6-4f5e-98dc-f30beba5e7d1" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="orderNo" ><![CDATA[%dw 2.0
+output application/java
+---
+attributes.uriParams.orderNo]]></ee:set-variable>
+				<ee:set-variable variableName="orderDate" ><![CDATA[%dw 2.0
+output application/java
+---
+attributes.uriParams.orderDate]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<scatter-gather doc:name="Scatter-Gather" doc:id="8b0624f9-38c2-4ab2-8913-3cb5f2bb8b5e" >
+			<route >
+				<http:request method="GET" doc:name="Fetch Orders" doc:id="81338165-5668-4e3b-9d9a-dc18da35a1aa" config-ref="HTTP_Request_Purchase_configuration" path="/orders" target="purchaseOrder">
+					<http:query-params ><![CDATA[#[{
+	orderNo: vars.orderNo,
+	orderDate: vars.orderDate
+}]]]></http:query-params>
+				</http:request>
+			</route>
+			<route >
+				<http:request method="GET" doc:name="Request Order Details" doc:id="f2b63ca8-68a0-41f9-b243-e3bad8c3de00" config-ref="HTTP_Request_Purchase_configuration" path="/orderDetails" target="purchaseOrderDetails">
+					<http:query-params ><![CDATA[#[{
+	orderNo: vars.orderNo,
+	orderDate: vars.orderDate
+}]]]></http:query-params>
+				</http:request>
+			</route>
+		</scatter-gather>
+		<ee:transform doc:name="Join Data" doc:id="cba48236-d438-4053-a0fb-cd2835eba853" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	OrderNo: vars.purchaseOrder[0].OrderNo,
+    OrderDate: vars.purchaseOrder[0].OrderDate,
+    Details: vars.purchaseOrderDetails map ((detail) -> {
+        ProductCode: detail.ProductCode,
+        Quantity: detail.Quantity,
+        PurchasePrice: detail.PurchasePrice,
+        Tax: detail.Tax
+    })
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<jms:publish doc:name="Publish" doc:id="b6174411-35ef-4dea-96d0-afb6fdf8d313" config-ref="JMS_Config" destination="Q.PURCHASE.INVOICES">
+			<jms:message outboundContentType="application/json" />
+		</jms:publish>
+		<logger level="INFO" doc:name="End Log" doc:id="d314f2fb-e2d6-44d6-ad45-4da85416532a" message="Completed Publishing Queue Messages" />
+	</flow>
+</mule>

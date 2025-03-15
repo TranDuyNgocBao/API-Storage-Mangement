@@ -1,0 +1,27 @@
+%dw 2.0
+
+type auto_dbc5d41d_f47e_4ba3_8a3a_96076186ba1d_Input_Attributes = {|
+  clientCertificate?: {|
+    publicKey?: {|  |}, 
+    "type"?: String, 
+    encoded?: Binary
+  |}, 
+  headers: {| "x-transaction-id"?: String |}, 
+  listenerPath: String, 
+  method: String, 
+  queryParams: {|
+    orderNo?: String, 
+    orderDate?: String, 
+    productCode?: String
+  |}, 
+  queryString: String, 
+  relativePath: String, 
+  remoteAddress: String, 
+  requestPath: String, 
+  requestUri: String, 
+  scheme: String, 
+  uriParams: {|  |}, 
+  version: String, 
+  localAddress: String
+|}
+

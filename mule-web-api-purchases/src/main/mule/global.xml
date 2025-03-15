@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd  http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+    
+    <http:listener-config name="mule-purchases-sapi-httpListenerConfig" basePath="purchases">
+        <http:listener-connection host="0.0.0.0" port="${secure::http.port}" />
+    </http:listener-config>
+    <apikit:config name="mule-purchases-sapi-config" api="resource::548af11c-1e3f-4199-898f-58d750ed8aaf:mule-purchases-sapi:1.0.5:raml:zip:mule-purchases-sapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <db:config name="Database_Config" doc:name="Database Config" doc:id="01f70cf5-b430-467a-839d-72d3d011172f">
+        <db:my-sql-connection host="${secure::db.mls-mysql.host}" port="${secure::db.mls-mysql.port}" user="${secure::db.mls-mysql.user}" password="${secure::db.mls-mysql.password}" />
+    </db:config>
+    <secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="7dcc34fd-264c-4d9b-af43-6df2c65335ca" file="environments/local.yaml" key="abcdef0123456789" />
+    <http:request-config name="HTTP_Request_Product_configuration" doc:name="HTTP Request configuration" doc:id="f466234f-ea3b-4036-b5e7-b52ebc102d00" basePath="/${secure::http.productbase}">
+        <http:request-connection host="${secure::http.producthost}" port="${secure::http.portproduct}" maxConnections="${secure::http.connections}" protocol="${secure::http.protocol}"/>
+    </http:request-config>
+    <http:request-config name="HTTP_Request_Purchase_configuration" doc:name="HTTP Request configuration" doc:id="b0c0af7d-f08e-4356-be1a-5241831d485a" basePath="/${secure::http.purchasebase}">
+        <http:request-connection host="${secure::http.host}" port="${secure::http.port}" maxConnections="${secure::http.connections}" protocol="${secure::http.protocol}"/>
+    </http:request-config>
+</mule>

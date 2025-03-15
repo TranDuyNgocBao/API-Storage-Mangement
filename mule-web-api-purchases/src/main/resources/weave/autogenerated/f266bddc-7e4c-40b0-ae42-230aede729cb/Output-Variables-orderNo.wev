@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_f266bddc_7e4c_40b0_ae42_230aede729cb_Output_Variables_orderNo = String
+

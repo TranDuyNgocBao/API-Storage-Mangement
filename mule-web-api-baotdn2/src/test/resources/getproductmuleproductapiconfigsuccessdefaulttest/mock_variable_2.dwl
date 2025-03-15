@@ -1,0 +1,1 @@
+"SELECT * FROM MLSDB_BaoTDN2.Products WHERE 1=1"

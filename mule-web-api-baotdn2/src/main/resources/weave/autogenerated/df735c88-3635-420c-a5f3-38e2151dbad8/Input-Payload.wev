@@ -1,0 +1,12 @@
+%dw 2.0
+
+type auto_df735c88_3635_420c_a5f3_38e2151dbad8_Input_Payload = {|
+  quantityInStock?: String, 
+  unitPrice?: String, 
+  unit?: String, 
+  productCode?: String, 
+  createdBy?: String, 
+  createdByDate?: String, 
+  productName?: String
+|}
+

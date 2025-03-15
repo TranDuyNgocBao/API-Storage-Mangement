@@ -1,0 +1,18 @@
+http:
+  protocol: "HTTP"
+  host: "localhost"
+  producthost: "localhost"
+  port: "8083"
+  portproduct: "8081"
+  connections: "6"
+  productbase: "products/v1"
+  salebase: "sales/v1"
+  
+db:
+  mls-mysql:
+    host: "127.0.0.1"
+    port: "3306"
+    user: "root"
+    password: "![QQm6zKYXZYcKIGom+conhQ==]"
+    sale-order-table: "MLSDB_BaoTDN2.SalesOrders"
+    sale-detail-order-table: "MLSDB_BaoTDN2.SalesOrderDetails"

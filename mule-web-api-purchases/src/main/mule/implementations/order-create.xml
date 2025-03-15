@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<flow name="post:\orders:application\json:mule-purchases-sapi-config">
+		<logger level="INFO" doc:name="Start Log" doc:id="3cc6c505-4894-44f9-96bd-cc0ddd8fecbb" message='Transaction ID: #[vars.transactionId], Message: "Start creating purchase order flow"' />
+		<ee:transform doc:name="Set inputPayload Variable" doc:id="46b6e7b6-6d1b-4eb3-b702-1a6be1eab7df">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="inputPayload"><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Prepare Saleforce Payload" doc:id="bd94fb98-b0ec-4e78-b4be-07bca747c338">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+[{
+	Name: payload.orderNo,
+	orderNo__c: payload.orderNo,
+	orderDate__c: payload.orderDate as Date as String {format: "dd/MM/yyyy"},
+	title__c: payload.title,
+	description__c: payload.descrition,
+	createdByDate__c: payload.createdByDate as Date as String {format: "dd/MM/yyyy"},
+	createdBy__c: payload.createdBy
+}]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="Database Connection" doc:id="a36f146e-2237-4fdf-a155-988eec7d2432" name="create-order-db" />
+		<ee:transform doc:name="Prepare Response" doc:id="f886caa5-67f7-471b-9d65-a8cde6caf1f9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	orderNo: vars.inputPayload.orderNo as String
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End Log" doc:id="50f67a40-6950-46d3-a78e-096ed124b709" message='Message: "Completed creating purchase order flow"' />
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="c34c3354-8f83-4866-a294-bf2878827d2c" type="DB:QUERY_EXECUTION" >
+				<ee:transform doc:name="Error Response" doc:id="48d1d159-254e-489f-962e-ddcb83476d7e" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"code": 400,
+	"message": "Bad Request",
+	"description": error.description,
+	"dateTime": now() as String {format: "yyyy-MM-dd'T'HH:mm:ss'Z'"},
+	"transactionId": vars.transactionId
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+
+    </flow>
+	</mule>

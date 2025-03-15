@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="order-update-suite.xml" />
+	<munit:test name="put:\orders:application\json:mule-purchases-sapi-config-success-test" doc:id="f139f414-eeca-4108-b34a-18319ceceddc" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Flow Reference" doc:id="2c6c0d22-8872-4e93-89d7-260c24bc7683" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fb19f732-a832-4913-bb0d-620c709e51e8" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java --- readUrl('classpath://putordersapplicationjsonmulepurchasessapiconfigsuccesstest\mock_payload.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://putordersapplicationjsonmulepurchasessapiconfigsuccesstest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="orderNo" value="#[output application/java --- readUrl('classpath://putordersapplicationjsonmulepurchasessapiconfigsuccesstest\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="orderDate" value="#[output application/java --- readUrl('classpath://putordersapplicationjsonmulepurchasessapiconfigsuccesstest\mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="transactionId" value="#[output application/java --- readUrl('classpath://putordersapplicationjsonmulepurchasessapiconfigsuccesstest\mock_variable_3.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:spy doc:name="Spy Set Input Payload" doc:id="0c1fd5c6-5feb-45e1-a34c-c676b4d07b9f" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="c5f4b2f2-ee25-49cf-a397-002aacd50a8e" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="53ca1fad-64d3-41a2-b993-a443addecc47" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import putordersapplicationjsonmulepurchasessapiconfigsuccesstest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="08cd3233-bbee-4372-b28f-e2774a6d4420" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import putordersapplicationjsonmulepurchasessapiconfigsuccesstest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit-tools:spy doc:name="Spy Prepare Success Response" doc:id="d044a41c-2ee3-4383-bba4-765c74ef2b1f" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="720df264-5e6e-400d-aab8-c2f22b991fea" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="8340fdfc-ef57-4d76-abc6-0a6056fefafb" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import putordersapplicationjsonmulepurchasessapiconfigsuccesstest::spy_assert_payload2
+---
+spy_assert_payload2::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="df2a9f60-4a24-4fb7-8d86-c66ebd0ad436" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import putordersapplicationjsonmulepurchasessapiconfigsuccesstest::spy_assert_payload3
+---
+spy_assert_payload3::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="cb40ab64-905f-40fb-9217-bce33702e3ef" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://putordersapplicationjsonmulepurchasessapiconfigsuccesstest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://putordersapplicationjsonmulepurchasessapiconfigsuccesstest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://putordersapplicationjsonmulepurchasessapiconfigsuccesstest\set-event_variable_.dwl')]" />
+					<munit:variable key="transactionId" value="#[output application/java --- readUrl('classpath://putordersapplicationjsonmulepurchasessapiconfigsuccesstest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to put:\orders:application\json:mule-purchases-sapi-config" doc:id="b655728d-4216-4054-948d-9faf923acbec" name="put:\orders:application\json:mule-purchases-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="d4dfe87f-05e6-4540-9e3a-dcd9975ea39f" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import putordersapplicationjsonmulepurchasessapiconfigsuccesstest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Set orderNo &amp; orderDate Variables" doc:id="75ad2560-3b28-4ce0-8702-6660672d4bf7" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="4a0d9fad-2255-4fb4-bd10-f94c1c693b7c" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Set Input Payload" doc:id="64530108-4db6-425d-9047-2bfab536c246" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="c5f4b2f2-ee25-49cf-a397-002aacd50a8e" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Prepare Success Response" doc:id="bf9243a5-c174-4ea2-8e1a-241f8eaa147c" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="720df264-5e6e-400d-aab8-c2f22b991fea" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="put:\orders:application\json:mule-purchases-sapi-config-not-found-test" doc:id="4091dbd7-dc89-4bdc-a760-fbf9df7e2ad5" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Flow Reference" doc:id="1c4218d2-dd23-4224-9a6c-4c0eba72197c" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fb19f732-a832-4913-bb0d-620c709e51e8" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java --- readUrl('classpath://putordersapplicationjsonmulepurchasessapiconfignotfoundtest\mock_payload.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://putordersapplicationjsonmulepurchasessapiconfignotfoundtest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="orderNo" value="#[output application/java --- readUrl('classpath://putordersapplicationjsonmulepurchasessapiconfignotfoundtest\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="orderDate" value="#[output application/java --- readUrl('classpath://putordersapplicationjsonmulepurchasessapiconfignotfoundtest\mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="transactionId" value="#[output application/java --- readUrl('classpath://putordersapplicationjsonmulepurchasessapiconfignotfoundtest\mock_variable_3.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:spy doc:name="Spy Set Input Payload" doc:id="55f9465a-8d00-4b57-ba3a-a9f45781a3aa" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="c5f4b2f2-ee25-49cf-a397-002aacd50a8e" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="e922e209-2cb5-4d84-a603-294743055abd" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import putordersapplicationjsonmulepurchasessapiconfignotfoundtest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="e2a72343-34a6-4915-88a4-250a91307f59" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import putordersapplicationjsonmulepurchasessapiconfignotfoundtest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit-tools:spy doc:name="Spy Prepare Not Found Response" doc:id="619f6d12-d664-40de-9fde-8b87ab9a776a" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e653cff2-b443-4764-a673-d2711b4cbfe0" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="a8b0f785-72b8-48b3-b30c-df1119450d55" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import putordersapplicationjsonmulepurchasessapiconfignotfoundtest::spy_assert_payload2
+---
+spy_assert_payload2::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="26506968-0212-4afb-ae71-79887bf36f83" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import putordersapplicationjsonmulepurchasessapiconfignotfoundtest::spy_assert_payload3
+---
+spy_assert_payload3::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="a951ad25-432c-4db0-8b8d-dd625949a2f9" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://putordersapplicationjsonmulepurchasessapiconfignotfoundtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://putordersapplicationjsonmulepurchasessapiconfignotfoundtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://putordersapplicationjsonmulepurchasessapiconfignotfoundtest\set-event_variable_.dwl')]" />
+					<munit:variable key="transactionId" value="#[output application/java --- readUrl('classpath://putordersapplicationjsonmulepurchasessapiconfignotfoundtest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to put:\orders:application\json:mule-purchases-sapi-config" doc:id="7fd03421-8101-424c-b4bc-cadb02225727" name="put:\orders:application\json:mule-purchases-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="2c3446ed-917b-4e09-be09-9835eddc4e73" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import putordersapplicationjsonmulepurchasessapiconfignotfoundtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Set orderNo &amp; orderDate Variables" doc:id="4feeb288-11c1-4eef-8b7b-e0434ab9046f" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="4a0d9fad-2255-4fb4-bd10-f94c1c693b7c" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Set Input Payload" doc:id="58a57133-907f-43cd-84f2-2e59906377de" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="c5f4b2f2-ee25-49cf-a397-002aacd50a8e" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Prepare Not Found Response" doc:id="91a8d1bf-8688-4491-87ab-1d7102d781c1" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e653cff2-b443-4764-a673-d2711b4cbfe0" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

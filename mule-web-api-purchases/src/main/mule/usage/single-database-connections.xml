@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<sub-flow name="fetch-order-details-db" doc:id="dbc5d41d-f47e-4ba3-8a3a-96076186ba1d" >
+		<db:select doc:name="Fetch Order Details" doc:id="9577cc81-f1cb-41ea-afa7-fc43d4a70de1" config-ref="Database_Config">
+			<db:sql><![CDATA[#[vars.sqlQuery]]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+    orderNo: vars.queryParams.orderNo,
+    productCode: vars.queryParams.productCode,
+    orderDate: vars.queryParams.orderDate
+  }]]]></db:input-parameters>
+		</db:select>
+	</sub-flow>
+	<sub-flow name="delete-order-detail-db" doc:id="7eae5708-f15a-4483-8fae-ba8f67a9ab5e" >
+		<db:delete doc:name="Delete Order Detail Single Input" doc:id="c0751934-d549-46e7-984c-6fc1c3a564fb" config-ref="Database_Config">
+			<db:sql><![CDATA[DELETE FROM MLSDB_BaoTDN2.PurchaseOrderDetails 
+WHERE 
+	OrderNo = :orderNo 
+	AND ProductCode = :productCode
+	AND OrderDate = :orderDate]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	orderNo: vars.orderNo,
+	productCode: vars.productCode,
+	orderDate: vars.orderDate
+}]]]></db:input-parameters>
+		</db:delete>
+	</sub-flow>
+	<sub-flow name="update-order-detail-db" doc:id="353d5837-143d-4079-8bfd-aeff8a4870a2" >
+		<db:update doc:name="Update Order Detail Single Input" doc:id="93071c46-3d23-41f0-8ab3-ee786003402d" config-ref="Database_Config">
+			<db:sql><![CDATA[UPDATE MLSDB_BaoTDN2.PurchaseOrderDetails
+SET
+	Quantity = COALESCE(:quantity, Quantity),
+	PurchasePrice = COALESCE(:purchasePrice, PurchasePrice),
+	Tax = COALESCE(:tax, Tax)
+WHERE
+	OrderNo = :orderNo
+	AND ProductCode = :productCode
+	AND OrderDate = :orderDate]]></db:sql>
+			<db:input-parameters><![CDATA[#[vars.inputPayload]]]></db:input-parameters>
+		</db:update>
+	</sub-flow>
+	<sub-flow name="create-order-detail-db" doc:id="22f49328-7d17-4e37-80bf-30fc8405fb47" >
+		<db:insert doc:name="Create Order Detail Single Input" doc:id="a0380cfe-b384-4366-90fd-563ec701dbb5" config-ref="Database_Config">
+					<db:sql><![CDATA[INSERT INTO MLSDB_BaoTDN2.PurchaseOrderDetails (
+    OrderNo,
+    ProductCode,
+    Quantity,
+    PurchasePrice,
+    Tax,
+    OrderDate
+)
+VALUES (
+    :orderNo,
+    :productCode,
+    :quantity,
+    :purchasePrice,
+    :tax,
+    :orderDate
+)]]></db:sql>
+					<db:input-parameters><![CDATA[#[vars.inputPayload]]]></db:input-parameters>
+				</db:insert>
+	</sub-flow>
+	<sub-flow name="fetch-orders-db" doc:id="f5b8d405-b1c6-4342-b97b-0cb0cdfff764" >
+		<db:select doc:name="Fetch Orders" doc:id="1b0b1bf9-8ce2-42ff-9c54-1782a0b5505f" config-ref="Database_Config">
+			<db:sql><![CDATA[#[vars.sqlQuery]]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+    orderNo: vars.queryParams.orderNo,
+    orderDate: vars.queryParams.orderDate,
+    createdByDate: vars.queryParams.createdByDate,
+    createdBy: vars.queryParams.createdBy
+  }]]]></db:input-parameters>
+		</db:select>
+	</sub-flow>
+	<sub-flow name="delete-order-db" doc:id="480d4bc3-8dbd-40bb-9883-14fc37aff153" >
+		<db:delete doc:name="Delete Order Single Input" doc:id="6b410389-ded5-4c8a-8e8d-91fb6bd8f09f" config-ref="Database_Config">
+			<db:sql><![CDATA[DELETE FROM MLSDB_BaoTDN2.PurchaseOrders WHERE OrderNo = :orderNo AND OrderDate = :orderDate]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	orderNo: vars.orderNo,
+	orderDate: vars.orderDate
+}]]]></db:input-parameters>
+		</db:delete>
+	</sub-flow>
+	<sub-flow name="update-order-db" doc:id="54ecc2cd-a327-4603-88a5-8148aadd94b7" >
+		<db:update doc:name="Update Order Single Input" doc:id="985cb2b8-fea0-4353-86bd-38abdeb18ae6" config-ref="Database_Config">
+			<db:sql><![CDATA[UPDATE MLSDB_BaoTDN2.PurchaseOrders
+SET
+	Title = COALESCE(:title, Title),
+	Description = COALESCE(:description, Description),
+	CreatedByDate = COALESCE(:createdByDate, CreatedByDate),
+	CreatedBy = COALESCE(:createdBy, CreatedBy)
+WHERE
+	OrderNo = :orderNo
+	AND OrderDate = :orderDate]]></db:sql>
+			<db:input-parameters><![CDATA[#[payload]]]></db:input-parameters>
+		</db:update>
+	</sub-flow>
+	<sub-flow name="create-order-db" doc:id="f266bddc-7e4c-40b0-ae42-230aede729cb" >
+		<db:insert doc:name="Insert Order Single Input" doc:id="746bfda4-954c-4426-b23f-7199e848eeb2" config-ref="Database_Config">
+			<db:sql><![CDATA[INSERT INTO MLSDB_BaoTDN2.PurchaseOrders (
+    OrderNo,
+    OrderDate,
+    Title,
+    Description,
+    CreatedByDate,
+    CreatedBy
+)
+VALUES (
+    :orderNo,
+    :orderDate,
+    :title,
+    :description,
+    :createdByDate,
+    :createdBy
+)]]></db:sql>
+			<db:input-parameters><![CDATA[#[vars.inputPayload]]]></db:input-parameters>
+		</db:insert>
+	</sub-flow>
+</mule>

@@ -1,0 +1,9 @@
+%dw 2.0
+
+type auto_f5b8d405_b1c6_4342_b97b_0cb0cdfff764_Input_Variables_queryParams = {|
+  orderNo?: String, 
+  orderDate?: String, 
+  createdByDate?: String, 
+  createdBy?: String
+|}
+

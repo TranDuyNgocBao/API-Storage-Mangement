@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="get-product-reports-suite.xml" />
+	<munit:test name="get:\product:mule-product-api-config-success-default-test" doc:id="b839e2a3-35a2-437d-bf38-131a680f1b1d" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Flow Reference" doc:id="39892791-31bd-4c39-8cf6-da98b2ff8c4e" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="7d88688f-fd35-49b4-b375-3d8e00b092df" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java --- readUrl('classpath://getproductmuleproductapiconfigsuccessdefaulttest\mock_payload.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getproductmuleproductapiconfigsuccessdefaulttest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="queryParams" value="#[output application/java --- readUrl('classpath://getproductmuleproductapiconfigsuccessdefaulttest\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="sqlQuery" value="#[output application/java --- readUrl('classpath://getproductmuleproductapiconfigsuccessdefaulttest\mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="transactionId" value="#[output application/java --- readUrl('classpath://getproductmuleproductapiconfigsuccessdefaulttest\mock_variable_3.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:spy doc:name="Spy Set Base Query" doc:id="49a4eb66-0a3d-4ca2-80cf-bc30b2b21595" processor="set-variable">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="dc39346d-2fa7-4e9c-adc4-747f2d5a6c15" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="bea0ef7c-0a70-4582-84f6-749c52b23532" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import getproductmuleproductapiconfigsuccessdefaulttest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="ca65b15a-5cab-45e0-a2bc-fa0b398d6450" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import getproductmuleproductapiconfigsuccessdefaulttest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit-tools:spy doc:name="Spy Transform Message" doc:id="bb689bd7-7a9b-489d-a7d7-6bf4b391af93" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="b5ce4842-10ba-4478-b3ce-a44c09a26fd0" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="7d78cb82-57bd-450a-b7c0-ba825378f155" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import getproductmuleproductapiconfigsuccessdefaulttest::spy_assert_payload2
+---
+spy_assert_payload2::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="7fbb2999-9617-40c0-8dd7-ff15ca73e5ee" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import getproductmuleproductapiconfigsuccessdefaulttest::spy_assert_payload3
+---
+spy_assert_payload3::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="dfc90a7a-0e3a-4014-a986-ba76216fc0b1" >
+				<munit:payload value="#[readUrl('classpath://getproductmuleproductapiconfigsuccessdefaulttest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getproductmuleproductapiconfigsuccessdefaulttest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getproductmuleproductapiconfigsuccessdefaulttest\set-event_variable_.dwl')]" />
+					<munit:variable key="transactionId" value="#[output application/java --- readUrl('classpath://getproductmuleproductapiconfigsuccessdefaulttest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\product:mule-product-api-config" doc:id="2ca9642f-8930-48bf-9ffe-1c70619e27d2" name="get:\product:mule-product-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="9a644139-97ce-4f09-80c1-8fc6833818a2" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getproductmuleproductapiconfigsuccessdefaulttest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Set Base Query" doc:id="fc14d4bf-6605-450e-8f20-25768e135974" processor="set-variable" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="dc39346d-2fa7-4e9c-adc4-747f2d5a6c15" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Transform Message" doc:id="693b3ce9-d7cf-496c-ad24-e3b424c07697" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="b5ce4842-10ba-4478-b3ce-a44c09a26fd0" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\product:mule-product-api-config-not-found-test" doc:id="f272edd9-f45a-4373-ab75-a7c6e3003869" >
+		<munit:behavior >
+			<munit-tools:spy doc:name="Spy Set Base Query" doc:id="30211b41-fcc5-4336-b225-e326c3076077" processor="set-variable">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="dc39346d-2fa7-4e9c-adc4-747f2d5a6c15" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="448c4862-39d5-4b7e-b04a-f9a6655d28af" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import getproductmuleproductapiconfignotfoundtest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="fe687d2b-d57e-4a60-bef7-4e300b62e422" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import getproductmuleproductapiconfignotfoundtest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit-tools:spy doc:name="Spy Transform Message" doc:id="18f79b07-29ae-4ac3-9922-9f2866521911" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ec324ba5-aa00-4637-9141-ab989a328258" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="b2ff8992-00c6-4779-8cce-f256bc4a3cb0" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import getproductmuleproductapiconfignotfoundtest::spy_assert_payload2
+---
+spy_assert_payload2::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="bde64edf-2cc0-472d-b5d3-8feffdbabf33" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import getproductmuleproductapiconfignotfoundtest::spy_assert_payload3
+---
+spy_assert_payload3::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="7d63f331-b76b-4c6b-af97-c58303ea0532" >
+				<munit:payload value="#[readUrl('classpath://getproductmuleproductapiconfignotfoundtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getproductmuleproductapiconfignotfoundtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getproductmuleproductapiconfignotfoundtest\set-event_variable_.dwl')]" />
+					<munit:variable key="transactionId" value="#[output application/java --- readUrl('classpath://getproductmuleproductapiconfignotfoundtest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\product:mule-product-api-config" doc:id="21508639-e4b5-45c9-b3e0-079d597f4986" name="get:\product:mule-product-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="604e8822-dfca-482e-acf4-0295c803bb75" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getproductmuleproductapiconfignotfoundtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Add ProductName Condition" doc:id="4e719a3f-cc2e-4208-a6fb-a892a345445f" processor="set-variable" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="c61f7e10-3833-4ada-969b-81e1be0e8077" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Add ProductCode Condition" doc:id="0d71983d-9699-4cd8-861d-0c14326734ca" processor="set-variable" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="853425c0-9d57-4f04-b17e-2f5295ce14ce" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Set Base Query" doc:id="ad20f13a-f18e-4209-9b24-7f3355afa281" processor="set-variable" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="dc39346d-2fa7-4e9c-adc4-747f2d5a6c15" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Transform Message" doc:id="28b0f9b1-d700-42f8-9fe6-042ba5d674d5" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ec324ba5-aa00-4637-9141-ab989a328258" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
